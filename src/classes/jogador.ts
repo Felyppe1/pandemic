@@ -40,10 +40,14 @@ export class Jogador {
     }
 
     getCartas() {
-        return this.cartas
+        return [...this.cartas]
     }
 
     getLocalizacao() {
         return this.localizacao
+    }
+
+    getPersonagem() {
+        return this.personagem
     }
 }

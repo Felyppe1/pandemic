@@ -1,32 +1,39 @@
-import { Carta, CartaCidade, COR_ENUM } from './carta'
+import {
+    Carta,
+    CartaCidade,
+    CartaEpidemia,
+    CartaJogador,
+    COR_ENUM,
+    TransporteAereo,
+} from './carta'
+import { DIFICULDADE_ENUM } from './jogo'
 
 export abstract class Baralho {
     private cartas: Carta[]
 
-    constructor(cartas: Carta[]) {
-        this.cartas = cartas
-
-        // this.embaralharCartas()
+    constructor() {
+        this.cartas = []
     }
 
     adicionarCarta(carta: Carta) {
         this.cartas.push(carta)
     }
 
-    retirarCarta() {
-        // if (this.cartas.length <= 2) {
-        //     throw new Error('O jogo acabou. Você perdeu!')
-        // }
+    retirarCarta(): Carta {
+        console.log(this.cartas.length)
+        if (this.cartas.length <= 2) {
+            throw new Error('O jogo acabou. Você perdeu!')
+        }
 
-        return this.cartas.pop()
+        return this.cartas.pop()!
     }
 
-    // embaralharCartas() {
-    //     for (let i = this.cartas.length - 1; i > 0; i--) {
-    //         const j = Math.floor(Math.random() * (i + 1))
-    //         [this.cartas[i], this.cartas[j]] = [this.cartas[j], this.cartas[i]]
-    //     }
-    // }
+    embaralharCartas() {
+        for (let i = this.cartas.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.cartas[i], this.cartas[j]] = [this.cartas[j], this.cartas[i]]
+        }
+    }
 
     getCartas() {
         return [...this.cartas]
@@ -34,12 +41,45 @@ export abstract class Baralho {
 }
 
 export class BaralhoJogo extends Baralho {
-    constructor() {
-        const cartas = cidades.map(
-            cidade => new CartaCidade(cidade.nome, cidade.cor),
+    definirDificuldade(dificuldade: DIFICULDADE_ENUM) {
+        const cartasCidade = cidades.map(cidade =>
+            new CartaCidade(cidade.nome, cidade.cor),
         )
 
-        super(cartas)
+        let cartasEpidemia: CartaJogador[] = []
+
+        while (true) {
+            cartasEpidemia.push(new CartaEpidemia())
+
+            if (
+                dificuldade === DIFICULDADE_ENUM.FACIL &&
+                cartasEpidemia.length === 4
+            ) {
+                break
+            }
+
+            if (
+                dificuldade === DIFICULDADE_ENUM.NORMAL &&
+                cartasEpidemia.length === 5
+            ) {
+                break
+            }
+
+            if (
+                dificuldade === DIFICULDADE_ENUM.HEROICO &&
+                cartasEpidemia.length === 6
+            ) {
+                break
+            }
+        }
+
+        const cartasEvento = [new TransporteAereo()]
+
+        const cartas = [...cartasCidade, ...cartasEpidemia, ...cartasEvento]
+
+        cartas.forEach(carta => this.adicionarCarta(carta))
+
+        this.embaralharCartas()
     }
 }
 

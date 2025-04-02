@@ -20,3 +20,9 @@ export class CartaCidade extends CartaJogador {
         this.cor = cor
     }
 }
+
+export class CartaEpidemia extends CartaJogador {}
+
+export abstract class CartaEvento extends CartaJogador {}
+
+export class TransporteAereo extends CartaEvento {}

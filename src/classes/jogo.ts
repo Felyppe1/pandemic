@@ -1,15 +1,15 @@
-import * as readline from 'readline'
-import { Baralho, BaralhoJogo } from './baralho'
+// import * as readline from 'readline'
+import { BaralhoJogo } from './baralho'
 import { Mapa } from './mapa'
 import { Jogador } from './jogador'
 import { escolherPersonagemAleatoriamente } from './personagem'
-import { Carta, CartaCidade, CartaJogador } from './carta'
+import { Carta } from './carta'
 
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-})
+// const rl = readline.createInterface({
+//     input: process.stdin,
+//     output: process.stdout,
+// })
 
 export enum DIFICULDADE_ENUM {
     FACIL = 'FACIL',
@@ -26,10 +26,12 @@ export class Jogo {
     constructor(qtdJogadores: number, dificuldade: DIFICULDADE_ENUM) {
         this.dificuldade = dificuldade
 
+        this.mapa = new Mapa()
+
         this.baralhoJogador = new BaralhoJogo(this.dificuldade)
 
         this.jogadores = Array.from({ length: qtdJogadores }).map(_ => {
-            let cartas: Carta[] = []
+            const cartas: Carta[] = []
             
             while (true) {
                 cartas.push(this.baralhoJogador.retirarCarta())
@@ -59,125 +61,125 @@ export class Jogo {
             )
         })
 
-        this.mapa = new Mapa()
+        this.jogadores[0].definirVez()
     }
 
-    async comecar() {
-        while (true) {
-            // Turno do jogador
-            for (const jogador of this.jogadores) {
-                // Realizar 4 ações
-                for (let i = 1; i < 5; i++) {
-                    const resposta = await this.perguntarAcao(i)
+    // async comecar() {
+    //     while (true) {
+    //         // Turno do jogador
+    //         for (const jogador of this.jogadores) {
+    //             // Realizar 4 ações
+    //             for (let i = 1; i < 5; i++) {
+    //                 const resposta = await this.perguntarAcao(i)
         
-                    if (resposta === '1') {
-                        await this.perguntarCidade(jogador)
-                    }
+    //                 if (resposta === '1') {
+    //                     await this.perguntarCidade(jogador)
+    //                 }
 
-                }
+    //             }
 
-                // Comprar 2 Cartas de Jogador
-                try {
-                    jogador.comprarCartas(this.baralhoJogador)
-                } catch (e) {
-                    console.error(e)
+    //             // Comprar 2 Cartas de Jogador
+    //             try {
+    //                 jogador.comprarCartas(this.baralhoJogador)
+    //             } catch (e) {
+    //                 console.error(e)
 
-                    const cartaRetirada1 = this.baralhoJogador.retirarCarta()
-                    await this.perguntarOQueFazerComCarta(cartaRetirada1)
+    //                 const cartaRetirada1 = this.baralhoJogador.retirarCarta()
+    //                 await this.perguntarOQueFazerComCarta(cartaRetirada1)
 
-                    const cartaRetirada2 = this.baralhoJogador.retirarCarta()
-                    await this.perguntarOQueFazerComCarta(cartaRetirada2)
-                }
+    //                 const cartaRetirada2 = this.baralhoJogador.retirarCarta()
+    //                 await this.perguntarOQueFazerComCarta(cartaRetirada2)
+    //             }
 
-                // Infectar cidades
-            }
+    //             // Infectar cidades
+    //         }
 
-            break
-        }
+    //         break
+    //     }
 
-        rl.close()
-    }
+    //     rl.close()
+    // }
     
-    async perguntarAcao(acaoX: number) {
-        console.log(`AÇÃO ${acaoX}`)
-        console.log('O que você deseja fazer?')
-        console.log('[1] Automóvel/Balsa')
+    // async perguntarAcao(acaoX: number) {
+    //     console.log(`AÇÃO ${acaoX}`)
+    //     console.log('O que você deseja fazer?')
+    //     console.log('[1] Automóvel/Balsa')
     
-        let resposta: string
+    //     let resposta: string
     
-        while (true) {
-            resposta = await this.input('Resposta (apenas um número): ')
+    //     while (true) {
+    //         resposta = await this.input('Resposta (apenas um número): ')
     
-            if (['1'].includes(resposta)) {
-                console.log()
-                break
-            }
+    //         if (['1'].includes(resposta)) {
+    //             console.log()
+    //             break
+    //         }
     
-            console.error('Opção inválida.')
-        }
+    //         console.error('Opção inválida.')
+    //     }
     
-        return resposta
-    }
+    //     return resposta
+    // }
 
-    async perguntarCidade(jogador: Jogador) {
-        console.log('Para qual cidade deseja ir?')
+    // async perguntarCidade(jogador: Jogador) {
+    //     console.log('Para qual cidade deseja ir?')
     
-        const opcoes = jogador.getLocalizacao().getConexoes().map((cidade, index) => {
-            const opcao = index + 1
+    //     const opcoes = jogador.getLocalizacao().getConexoes().map((cidade, index) => {
+    //         const opcao = index + 1
     
-            console.log(`[${opcao}] ${cidade.getNome()}`)
+    //         console.log(`[${opcao}] ${cidade.getNome()}`)
     
-            return opcao.toString()
-        })
+    //         return opcao.toString()
+    //     })
     
-        let resposta: string
+    //     let resposta: string
     
-        while (true) {
-            resposta = await this.input('Resposta (apenas um número): ')
+    //     while (true) {
+    //         resposta = await this.input('Resposta (apenas um número): ')
     
-            if (opcoes.includes(resposta)) {
-                const cidadeEscolhida = jogador.getLocalizacao().getConexoes()[parseInt(resposta) - 1]
+    //         if (opcoes.includes(resposta)) {
+    //             const cidadeEscolhida = jogador.getLocalizacao().getConexoes()[parseInt(resposta) - 1]
 
-                jogador.moverSe(cidadeEscolhida.getNome())
+    //             jogador.moverSe(cidadeEscolhida.getNome())
 
-                console.log(`Moveu-se para a cidade ${cidadeEscolhida.getNome()}\n`)
-                break
-            }
+    //             console.log(`Moveu-se para a cidade ${cidadeEscolhida.getNome()}\n`)
+    //             break
+    //         }
     
-            console.error('Opção inválida.')
-        }
+    //         console.error('Opção inválida.')
+    //     }
     
-        return resposta
-    }
+    //     return resposta
+    // }
     
-    async perguntarOQueFazerComCarta(carta: Carta) {
-        console.log('O que fazer deseja fazer??')
+    // async perguntarOQueFazerComCarta(carta: Carta) {
+    //     console.log('O que fazer deseja fazer??')
     
-        console.log(`[1] Descartar a carta NOME`)
-        console.log('[2] Doar uma carta sua')
+    //     console.log(`[1] Descartar a carta NOME`)
+    //     console.log('[2] Doar uma carta sua')
     
-        let resposta: string
+    //     let resposta: string
     
-        while (true) {
-            resposta = await this.input('Resposta (apenas um número): ')
+    //     while (true) {
+    //         resposta = await this.input('Resposta (apenas um número): ')
     
-            if (['1', '2'].includes(resposta)) {
-                break
-            }
+    //         if (['1', '2'].includes(resposta)) {
+    //             break
+    //         }
     
-            console.error('Opção inválida.')
-        }
+    //         console.error('Opção inválida.')
+    //     }
     
-        return resposta
-    }
+    //     return resposta
+    // }
     
-    async input(inputText?: string): Promise<string> {
-        return new Promise(resolve => {
-            rl.question(inputText ?? '', input => {
-                resolve(input.trim())
-            })
-        })
-    }
+    // async input(inputText?: string): Promise<string> {
+    //     return new Promise(resolve => {
+    //         rl.question(inputText ?? '', input => {
+    //             resolve(input.trim())
+    //         })
+    //     })
+    // }
 }
 
 

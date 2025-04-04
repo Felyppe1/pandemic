@@ -23,7 +23,7 @@ export class Mapa {
     }
 
     mostrarMapa() {
-        for (let cidade of this.cidades.values()) {
+        for (const cidade of this.cidades.values()) {
             console.log(
                 `${cidade.getNome()} (${cidade.getCor()}) -> ${cidade
                     .getConexoes()

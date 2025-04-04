@@ -48,7 +48,7 @@ export class BaralhoJogo extends Baralho {
             new CartaCidade(cidade.nome, cidade.cor),
         )
 
-        let cartasEpidemia: CartaJogador[] = []
+        const cartasEpidemia: CartaJogador[] = []
 
         while (true) {
             cartasEpidemia.push(new CartaEpidemia())

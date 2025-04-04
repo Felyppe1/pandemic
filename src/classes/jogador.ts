@@ -7,11 +7,13 @@ export class Jogador {
     private cartas: Carta[]
     private personagem: Personagem
     private localizacao: Cidade
+    private acoesRestantes: number
 
     constructor(cartas: Carta[], personagem: Personagem, localizacao: Cidade) {
         this.cartas = cartas
         this.personagem = personagem
         this.localizacao = localizacao
+        this.acoesRestantes = 0
     }
 
     comprarCartas(baralho: BaralhoJogo) {
@@ -37,6 +39,14 @@ export class Jogador {
         }
 
         this.localizacao = cidade
+    }
+
+    estaNaVez() {
+        return this.acoesRestantes > 0
+    }
+
+    definirVez() {
+        this.acoesRestantes = 4
     }
 
     getCartas() {

@@ -21,21 +21,14 @@ export class Jogo {
     private jogadores: Jogador[]
     private baralhoJogador: BaralhoJogo
     private mapa: Mapa
+    private dificuldade: DIFICULDADE_ENUM
 
-    constructor() {
-        this.jogadores = []
-        this.baralhoJogador = new BaralhoJogo()
-        this.mapa = new Mapa()
-    }
+    constructor(qtdJogadores: number, dificuldade: DIFICULDADE_ENUM) {
+        this.dificuldade = dificuldade
 
-    async comecarJogo() {
-        const qtdJogadores = await this.perguntarQtdJogadores()
+        this.baralhoJogador = new BaralhoJogo(this.dificuldade)
 
-        await this.escolherDificuldade(this.baralhoJogador)
-
-        this.baralhoJogador.getCartas().forEach(carta => console.log(carta))
-
-        this.jogadores = Array.from({ length: qtdJogadores }).map(jogador => {
+        this.jogadores = Array.from({ length: qtdJogadores }).map(_ => {
             let cartas: Carta[] = []
             
             while (true) {
@@ -66,12 +59,10 @@ export class Jogo {
             )
         })
 
-        // this.jogadores.forEach((jogador, index) => {
-        //     console.log('jogador ', index)
-        //     console.log(jogador.getCartas())
-        //     console.log(jogador.getPersonagem())
-        // })
+        this.mapa = new Mapa()
+    }
 
+    async comecar() {
         while (true) {
             // Turno do jogador
             for (const jogador of this.jogadores) {
@@ -105,55 +96,6 @@ export class Jogo {
         }
 
         rl.close()
-    }
-
-    async escolherDificuldade(baralhoJogador: BaralhoJogo) {
-        console.log('Escolha a dificuldade:')
-        console.log('[1] Introdutório')
-        console.log('[2] Normal')
-        console.log('[3] Heróico')
-
-        let resposta: string
-
-        while (true) {
-            resposta = await this.input('Resposta (apenas número): ')
-    
-            if (['1', '2', '3'].includes(resposta)) {
-                const dificuldadeEnum = resposta === '1' 
-                    ? DIFICULDADE_ENUM.FACIL
-                    : resposta === '2'
-                        ? DIFICULDADE_ENUM.NORMAL
-                        : DIFICULDADE_ENUM.HEROICO 
-                
-                baralhoJogador.definirDificuldade(dificuldadeEnum)
-
-                console.log()
-                break
-            }
-    
-            console.error('Número inválido.')
-        }
-    }
-    
-    async perguntarQtdJogadores() {
-        console.log('Selecione a quantidade de jogadores: 1, 2, 3, 4')
-    
-        let resposta: string
-    
-        while (true) {
-            resposta = await this.input('Número: ')
-    
-            if (['1', '2', '3', '4'].includes(resposta)) {
-                console.error(`Você selecionou ${resposta} jogador(es).`)
-                console.log()
-    
-                break
-            }
-    
-            console.error('Número inválido.')
-        }
-    
-        return parseInt(resposta)
     }
     
     async perguntarAcao(acaoX: number) {

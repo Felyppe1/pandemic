@@ -41,7 +41,9 @@ export abstract class Baralho {
 }
 
 export class BaralhoJogo extends Baralho {
-    definirDificuldade(dificuldade: DIFICULDADE_ENUM) {
+    constructor(dificuldade: DIFICULDADE_ENUM) {
+        super()
+
         const cartasCidade = cidades.map(cidade =>
             new CartaCidade(cidade.nome, cidade.cor),
         )

@@ -1,21 +1,24 @@
-import { cidades } from '../dados/cidades'
 import {
     Carta,
     CartaCidade,
     CartaEpidemia,
+    CartaInfeccao,
     FinanciamentoGovernamental,
     Prognostico,
     RecursoExtra,
     TransporteAereo,
     UmaNoiteTranquila,
 } from './carta'
+import { Cidade } from './cidade'
 import { DIFICULDADE_ENUM } from './jogo'
 
 export abstract class Baralho {
     private cartas: Carta[]
+    private descarte: Carta[]
 
     constructor() {
         this.cartas = []
+        this.descarte = []
     }
 
     adicionarCarta(carta: Carta) {
@@ -23,12 +26,15 @@ export abstract class Baralho {
     }
 
     retirarCarta(): Carta {
-        console.log(this.cartas.length)
         if (this.cartas.length <= 2) {
             throw new Error('O jogo acabou. Você perdeu!')
         }
 
-        return this.cartas.pop()!
+        const cartaRetirada = this.cartas.pop()!
+
+        this.descarte.push(cartaRetirada)
+
+        return cartaRetirada
     }
 
     embaralharCartas() {
@@ -44,11 +50,11 @@ export abstract class Baralho {
 }
 
 export class BaralhoJogo extends Baralho {
-    constructor() {
+    constructor(cidades: Cidade[]) {
         super()
 
         const cartasCidade = cidades.map(
-            cidade => new CartaCidade(cidade.nome, cidade.cor),
+            cidade => new CartaCidade(cidade.getNome(), cidade.getCor()),
         )
 
         const cartasEvento = [
@@ -86,4 +92,24 @@ export class BaralhoJogo extends Baralho {
     }
 }
 
-export class BaralhoInfeccao extends Baralho {}
+export class BaralhoInfeccao extends Baralho {
+    private velocidadeInfeccao: number // TODO: assim não dá
+
+    constructor(cidades: Cidade[]) {
+        super()
+
+        const cartasInfeccao = cidades.map(
+            cidade => new CartaInfeccao(cidade.getNome(), cidade.getCor()),
+        )
+
+        cartasInfeccao.forEach(carta => this.adicionarCarta(carta))
+
+        this.embaralharCartas()
+
+        this.velocidadeInfeccao = 2
+    }
+
+    getVelocidadeInfeccao() {
+        return this.velocidadeInfeccao
+    }
+}

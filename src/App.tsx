@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { DIFICULDADE_ENUM, Jogo } from './classes/jogo'
 import { JogoIniciado } from './components/JogoIniciado'
 import { Turno } from './components/Turno'
+import { CartaCidade, CartaEvento } from './classes/carta'
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
@@ -10,7 +11,20 @@ export function App() {
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
 
     const iniciarJogo = () => {
-        setJogo(new Jogo(qtdJogadores, dificuldade))
+        const jogo = new Jogo(qtdJogadores, dificuldade)
+        setJogo(jogo)
+
+        console.log(jogo.getCidade('Atlanta').getConexoes())
+        console.log(jogo.getCidade('Atlanta').temCentroPesquisa())
+        jogo.getJogadores().forEach(jogador => {
+            jogador.getCartas().forEach(carta => {
+                if (carta instanceof CartaCidade) {
+                    carta.getNome()
+                } else if (carta instanceof CartaEvento) {
+                    carta.getDescricao()
+                }
+            })
+        })
     }
 
     return (

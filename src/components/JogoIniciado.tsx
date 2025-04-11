@@ -15,11 +15,11 @@ export function JogoIniciado({ jogo, onFinalizarTurno }: JogoIniciadoProps) {
         if (jogo) {
             setMostrar('jogadores')
 
-            const timer1 = setTimeout(() => setMostrar('mensagem'), 1000)
+            const timer1 = setTimeout(() => setMostrar('mensagem'), 5000)
             const timer2 = setTimeout(() => {
                 setMostrar(null)
                 onFinalizarTurno()
-            }, 2000)
+            }, 7000)
 
             return () => {
                 clearTimeout(timer1)

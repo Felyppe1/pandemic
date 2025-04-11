@@ -1,26 +1,24 @@
-import { Baralho, BaralhoJogo } from './baralho'
-import { Carta, CartaCidade, COR_ENUM } from './carta'
+import { BaralhoJogo } from './baralho'
+import { Carta, CartaJogador } from './carta'
 import { Cidade } from './cidade'
 import { Personagem } from './personagem'
 
 export class Jogador {
-    private cartas: Carta[]
+    private cartas: CartaJogador[]
     private personagem: Personagem
     private localizacao: Cidade
-    private acoesRestantes: number
 
     constructor(cartas: Carta[], personagem: Personagem, localizacao: Cidade) {
         this.cartas = cartas
         this.personagem = personagem
         this.localizacao = localizacao
-        this.acoesRestantes = 0
     }
 
     comprarCartas(baralho: BaralhoJogo) {
         if (this.cartas.length === 7) {
             throw new Error('Jogador já tem 7 cartas')
         }
-        
+
         const carta1 = baralho.retirarCarta()
         const carta2 = baralho.retirarCarta()
 
@@ -39,14 +37,6 @@ export class Jogador {
         }
 
         this.localizacao = cidade
-    }
-
-    estaNaVez() {
-        return this.acoesRestantes > 0
-    }
-
-    definirVez() {
-        this.acoesRestantes = 4
     }
 
     getCartas() {

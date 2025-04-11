@@ -1,6 +1,12 @@
-import { COR_ENUM } from '../classes/carta'
+import { COR_ENUM, NomeCidade } from '../classes/cidade'
 
-export const cidades = [
+interface Cidade {
+    nome: NomeCidade
+    cor: COR_ENUM
+    conectadoA: NomeCidade[]
+}
+
+export const cidades: Cidade[] = [
     {
         nome: 'San Francisco',
         cor: COR_ENUM.AZUL,

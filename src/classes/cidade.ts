@@ -1,13 +1,11 @@
-import { COR_ENUM } from './carta'
-
 export class Cidade {
-    private nome: string
+    private nome: NomeCidade
     private cor: COR_ENUM
     private cubosDoenca: Map<COR_ENUM, number>
     private temCentro: boolean
     private conexoes: Cidade[]
 
-    constructor(nome: string, cor: COR_ENUM) {
+    constructor(nome: NomeCidade, cor: COR_ENUM) {
         this.nome = nome
         this.cor = cor
         this.conexoes = []
@@ -33,6 +31,33 @@ export class Cidade {
     getConexoes() {
         return this.conexoes
     }
+
+    adicionarCentroPesquisa() {
+        if (this.temCentro) {
+            throw new Error('Cidade já tem centro de pesquisa')
+        }
+
+        this.temCentro = true
+    }
+
+    temCentroPesquisa() {
+        return this.temCentro
+    }
+
+    adicionarCubo(cor: COR_ENUM, quantidade: number) {
+        this.cubosDoenca.set(cor, quantidade)
+    }
+
+    getCubosDoenca() {
+        return this.cubosDoenca
+    }
+}
+
+export enum COR_ENUM {
+    AMARELO = 'AMARELO',
+    AZUL = 'AZUL',
+    PRETO = 'PRETO',
+    VERMELHO = 'VERMELHO',
 }
 
 export enum CIDADE_ENUM {
@@ -87,3 +112,52 @@ export enum CIDADE_ENUM {
     JAKARTA = 'Jakarta',
     SYDNEY = 'Sydney',
 }
+
+export type NomeCidade =
+    | 'San Francisco'
+    | 'Chicago'
+    | 'Atlanta'
+    | 'Montreal'
+    | 'New York'
+    | 'Washington'
+    | 'Madrid'
+    | 'London'
+    | 'Paris'
+    | 'Essen'
+    | 'Milan'
+    | 'St. Petersburg'
+    | 'Los Angeles'
+    | 'Mexico City'
+    | 'Miami'
+    | 'Bogotá'
+    | 'Lima'
+    | 'Santiago'
+    | 'Buenos Aires'
+    | 'São Paulo'
+    | 'Lagos'
+    | 'Kinshasa'
+    | 'Johannesburg'
+    | 'Algiers'
+    | 'Cairo'
+    | 'Istanbul'
+    | 'Baghdad'
+    | 'Tehran'
+    | 'Moscow'
+    | 'Riyadh'
+    | 'Karachi'
+    | 'Delhi'
+    | 'Mumbai'
+    | 'Chennai'
+    | 'Kolkata'
+    | 'Beijing'
+    | 'Seoul'
+    | 'Tokyo'
+    | 'Shanghai'
+    | 'Osaka'
+    | 'Taipei'
+    | 'Hong Kong'
+    | 'Bangkok'
+    | 'Manila'
+    | 'Ho Chi Minh City'
+    | 'Jakarta'
+    | 'Sydney'

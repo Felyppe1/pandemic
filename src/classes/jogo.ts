@@ -1,3 +1,4 @@
+import { NomeCidade } from './cidade'
 import { Jogador } from './jogador'
 import { escolherPersonagemAleatoriamente } from './personagem'
 import { Tabuleiro } from './tabuleiro'
@@ -60,5 +61,13 @@ export class Jogo {
     proximoJogador() {
         this.indiceJogadorAtual =
             ((this.indiceJogadorAtual + 1) % this.jogadores.length) - 1
+    }
+
+    getCidade(nome: NomeCidade) {
+        return this.tabuleiro.getCidade(nome)
+    }
+
+    getTabuleiro() {
+        return this.tabuleiro
     }
 }

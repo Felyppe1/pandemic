@@ -3,6 +3,7 @@ import { DIFICULDADE_ENUM, Jogo } from './classes/jogo'
 import { JogoIniciado } from './components/JogoIniciado'
 import { Turno } from './components/Turno'
 import { CartaCidade, CartaEvento } from './classes/carta'
+import { Tabuleiro } from './components/Tabuleiro'
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
@@ -28,20 +29,17 @@ export function App() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen w-screen">
+        <div className="flex flex-col items-center justify-center h-screen w-screen relative">
             {jogo ? (
-                <div
-                    className={`relative bg-contain bg-center bg-no-repeat bg-[url('/tabuleiro.png')] w-[69rem] h-[46rem] flex flex-col items-center justify-center`}
-                >
-                    {
-                        <JogoIniciado
-                            jogo={jogo}
-                            onFinalizarTurno={() => setFase('turno')}
-                        />
-                    }
+                <>
+                    <Tabuleiro tabuleiro={jogo.getTabuleiro()} />
+                    <JogoIniciado
+                        jogo={jogo}
+                        onFinalizarTurno={() => setFase('turno')}
+                    />
 
                     {fase === 'turno' ? <Turno jogo={jogo} /> : <></>}
-                </div>
+                </>
             ) : (
                 <div className="p-6 shadow-md rounded">
                     <h1 className="text-xl font-bold mb-4">Configurar Jogo</h1>

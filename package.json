@@ -39,6 +39,6 @@
         "vite": "^6.2.0"
     },
     "lint-staged": {
-        "src/**/*": "prettier --write"
+        "src/**/*.{ts,tsx,css}": "prettier --write"
     }
 }

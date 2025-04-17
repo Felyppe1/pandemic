@@ -30,7 +30,7 @@ export function JogoIniciado({ jogo, onFinalizarTurno }: JogoIniciadoProps) {
 
     if (mostrar === 'jogadores') {
         return (
-            <div className="flex justify-evenly w-full flex-wrap gap-6 px-8">
+            <div className="absolute flex justify-evenly w-full flex-wrap gap-6 px-8">
                 {jogo.getJogadores().map((jogador, index) => {
                     return (
                         <div
@@ -57,7 +57,7 @@ export function JogoIniciado({ jogo, onFinalizarTurno }: JogoIniciadoProps) {
 
     if (mostrar === 'mensagem') {
         return (
-            <div className="bg-yellow-600 px-10 py-4 rounded-lg text-5xl font-bold text-white text-center w-fit">
+            <div className="absolute bg-yellow-600 px-10 py-4 rounded-lg text-5xl font-bold text-white text-center w-fit">
                 Jogo Iniciado!
             </div>
         )

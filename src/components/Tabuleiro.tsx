@@ -1,6 +1,5 @@
 import { COR_ENUM, NomeCidade } from '../classes/cidade'
 import { Tabuleiro as TabuleiroClasse } from '../classes/tabuleiro'
-// import { mapeamentoCor } from "../utils/mapeamentos";
 
 const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     {
@@ -99,6 +98,8 @@ export function Tabuleiro({ tabuleiro }: TabuleiroProps) {
                         tabuleiro.getCidade(cidade.nomeCidade).getCor()
                     ]
 
+                const cidadee = tabuleiro.getCidade(cidade.nomeCidade)
+
                 return (
                     <g
                         key={i}
@@ -110,13 +111,7 @@ export function Tabuleiro({ tabuleiro }: TabuleiroProps) {
                             cx={cidade.x}
                             cy={cidade.y}
                             r="10"
-                            fill={
-                                mapeamentoCor[
-                                    tabuleiro
-                                        .getCidade(cidade.nomeCidade)
-                                        .getCor()
-                                ]
-                            }
+                            fill={mapeamentoCor[cidadee.getCor()]}
                             strokeWidth="2"
                         />
                         <text
@@ -128,6 +123,25 @@ export function Tabuleiro({ tabuleiro }: TabuleiroProps) {
                         >
                             {cidade.nomeCidade}
                         </text>
+
+                        {/* Jogadores na cidade */}
+                        {cidadee.getJogadores().map((jogador, idx) => (
+                            <g
+                                key={idx}
+                                className={``}
+                                transform={`translate(${cidade.x - idx * 8}, ${cidade.y - 40})`}
+                            >
+                                <path
+                                    d="M 20 0 C 26 0, 30 5, 30 12 C 30 17, 27 22, 22 24 L 22 30 L 28 45
+                                    C 29 48, 26 50, 23 50 H 17 C 14 50, 11 48, 12 45 L 18 30 L 18 24
+                                    C 13 22, 10 17, 10 12 C 10 5, 14 0, 20 0 Z"
+                                    fill="blue"
+                                    stroke="white"
+                                    strokeWidth="2"
+                                    transform="scale(0.8)"
+                                />
+                            </g>
+                        ))}
                     </g>
                 )
             })}

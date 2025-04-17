@@ -38,7 +38,7 @@ export class Jogo {
             return new Jogador(
                 cartas,
                 escolherPersonagemAleatoriamente(),
-                this.tabuleiro.getCidade('Atlanta'),
+                this.tabuleiro.getCidade('Bogotá'),
             )
         })
 

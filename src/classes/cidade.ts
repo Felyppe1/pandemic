@@ -62,7 +62,13 @@ export class Cidade {
     }
 
     adicionarJogador(jogador: Jogador) {
-        this.jogadores.push(jogador)
+        if (!this.jogadores.includes(jogador)) {
+            this.jogadores.push(jogador)
+        }
+    }
+
+    removerJogador(jogador: Jogador) {
+        this.jogadores = this.jogadores.filter(j => j !== jogador)
     }
 
     temCentroPesquisa() {
@@ -71,6 +77,10 @@ export class Cidade {
 
     getCubosDoenca() {
         return this.cubosDoenca
+    }
+
+    getJogadores() {
+        return this.jogadores
     }
 }
 

@@ -11,7 +11,9 @@ export class Jogador {
     constructor(cartas: Carta[], personagem: Personagem, localizacao: Cidade) {
         this.cartas = cartas
         this.personagem = personagem
+
         this.localizacao = localizacao
+        localizacao.adicionarJogador(this)
     }
 
     comprarCartas(baralho: BaralhoJogo) {
@@ -36,7 +38,9 @@ export class Jogador {
             )
         }
 
+        this.localizacao.removerJogador(this)
         this.localizacao = cidade
+        cidade.adicionarJogador(this)
     }
 
     getCartas() {

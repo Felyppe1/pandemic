@@ -1,9 +1,13 @@
+import { CuboDoenca } from './cubo-doenca'
+import { Jogador } from './jogador'
+
 export class Cidade {
     private nome: NomeCidade
     private cor: COR_ENUM
     private cubosDoenca: Map<COR_ENUM, number>
     private temCentro: boolean
     private conexoes: Cidade[]
+    private jogadores: Jogador[]
 
     constructor(nome: NomeCidade, cor: COR_ENUM) {
         this.nome = nome
@@ -11,6 +15,7 @@ export class Cidade {
         this.conexoes = []
         this.cubosDoenca = new Map()
         this.temCentro = false
+        this.jogadores = []
     }
 
     adicionarConexao(cidade: Cidade) {
@@ -40,12 +45,28 @@ export class Cidade {
         this.temCentro = true
     }
 
-    temCentroPesquisa() {
-        return this.temCentro
+    adicionarCubos(cuboDoenca: CuboDoenca, quantidade: number) {
+        cuboDoenca.getCubos(quantidade)
+
+        const quantidadeAtual = this.cubosDoenca.get(cuboDoenca.getCor())!
+
+        if (quantidadeAtual + quantidade > 3) {
+            this.conexoes.forEach(cidade => {
+                cidade.adicionarCubos(cuboDoenca, 1)
+            })
+
+            return
+        }
+
+        this.cubosDoenca.set(cuboDoenca.getCor(), quantidade)
     }
 
-    adicionarCubo(cor: COR_ENUM, quantidade: number) {
-        this.cubosDoenca.set(cor, quantidade)
+    adicionarJogador(jogador: Jogador) {
+        this.jogadores.push(jogador)
+    }
+
+    temCentroPesquisa() {
+        return this.temCentro
     }
 
     getCubosDoenca() {

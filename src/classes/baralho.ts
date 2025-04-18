@@ -47,6 +47,14 @@ export abstract class Baralho {
     getCartas() {
         return [...this.cartas]
     }
+
+    descartarCarta(carta: Carta) {
+        this.descarte.push(carta)
+    }
+
+    getDescarte() {
+        return this.descarte
+    }
 }
 
 export class BaralhoJogo extends Baralho {

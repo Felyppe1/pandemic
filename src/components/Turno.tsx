@@ -2,10 +2,7 @@ import { useState } from 'react'
 import { CartaCidade, CartaEvento } from '../classes/carta'
 import { Jogo } from '../classes/jogo'
 import { COR_ENUM } from '../classes/cidade'
-
-interface TurnoProps {
-    jogo: Jogo
-}
+import { AcaoProps } from '../App'
 
 const mapeamentoCor = {
     [COR_ENUM.AMARELO]: 'bg-yellow-400',
@@ -14,7 +11,12 @@ const mapeamentoCor = {
     [COR_ENUM.VERMELHO]: 'bg-red-700',
 }
 
-export function Turno({ jogo }: TurnoProps) {
+interface TurnoProps {
+    jogo: Jogo
+    onClickAcao: (acao: AcaoProps) => void
+}
+
+export function Turno({ jogo, onClickAcao }: TurnoProps) {
     const [esconder, setEsconder] = useState(false)
     const jogadorAtual = jogo.getJogadorAtual()
 
@@ -34,10 +36,20 @@ export function Turno({ jogo }: TurnoProps) {
 
             {/* Ações disponíveis */}
             {!esconder && (
-                <div className="absolute top-1/3 left-4 bg-opacity-80 p-4 rounded shadow">
+                <div className="absolute top-1/3 left-4 bg-opacity-80 p-4 rounded shadow flex flex-col gap-2">
                     <h2 className="font-bold mb-2">Ações</h2>
-                    <button className="bg-blue-500 text-white px-3 py-1 rounded">
+                    {/* Vai ser um radio */}
+                    <button
+                        onClick={() => onClickAcao('balsa')}
+                        className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
                         Automóvel / Balsa
+                    </button>
+                    <button
+                        onClick={() => onClickAcao('voo direto')}
+                        className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
+                        Voo Direto
                     </button>
                 </div>
             )}
@@ -50,7 +62,7 @@ export function Turno({ jogo }: TurnoProps) {
                         {jogadorAtual.getCartas().map((carta, index) =>
                             carta instanceof CartaCidade ? (
                                 <div
-                                    key={index}
+                                    key={carta.getNome()}
                                     className={`w-28 h-40 rounded-md shadow-md flex items-center justify-center text-center text-sm font-semibold p-2 ${mapeamentoCor[carta.getCor()]}`}
                                 >
                                     {carta.getNome()}

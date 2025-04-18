@@ -1,5 +1,5 @@
 import { BaralhoJogo } from './baralho'
-import { Carta, CartaJogador } from './carta'
+import { Carta, CartaCidade, CartaJogador } from './carta'
 import { Cidade } from './cidade'
 import { Personagem } from './personagem'
 
@@ -27,17 +27,41 @@ export class Jogador {
         this.cartas.push(carta1!, carta2!)
     }
 
-    moverSe(nomeCidade: string) {
-        const cidade = this.localizacao
+    balsa(cidade: Cidade) {
+        const eConexao = this.localizacao
             .getConexoes()
-            .find(conexao => conexao.getNome() === nomeCidade)
+            .find(conexao => conexao === cidade)
 
-        if (!cidade) {
+        if (!eConexao) {
             throw new Error(
                 'Não é possível se mover para uma cidade que não está conectada a sua',
             )
         }
 
+        this.moverSe(cidade)
+    }
+
+    vooDireto(cidade: Cidade, baralho: BaralhoJogo) {
+        const cartaEncontrada = this.cartas.find(
+            carta =>
+                carta instanceof CartaCidade &&
+                carta.getNome() === cidade.getNome(),
+        )
+
+        if (!cartaEncontrada) {
+            throw new Error(
+                'Você não tem a carta para fazer voo direto para essa cidade',
+            )
+        }
+
+        this.moverSe(cidade)
+
+        this.cartas = this.cartas.filter(carta => carta !== cartaEncontrada)
+
+        baralho.descartarCarta(cartaEncontrada)
+    }
+
+    private moverSe(cidade: Cidade) {
         this.localizacao.removerJogador(this)
         this.localizacao = cidade
         cidade.adicionarJogador(this)

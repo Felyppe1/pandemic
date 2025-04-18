@@ -4,6 +4,9 @@ import { JogoIniciado } from './components/JogoIniciado'
 import { Turno } from './components/Turno'
 import { CartaCidade, CartaEvento } from './classes/carta'
 import { Tabuleiro } from './components/Tabuleiro'
+import { Cidade } from './classes/cidade'
+
+export type AcaoProps = 'balsa' | 'voo direto' | null
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
@@ -11,12 +14,28 @@ export function App() {
     const [qtdJogadores, setQtdJogadores] = useState(2)
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
 
+    const [acao, setAcao] = useState<AcaoProps>(null)
+
+    function onClickCidade(cidade: Cidade) {
+        if (acao === 'voo direto')
+            jogo
+                ?.getJogadorAtual()
+                .vooDireto(cidade, jogo.getTabuleiro().getBaralhoJogador())
+        else if (acao === 'balsa') jogo?.getJogadorAtual().balsa(cidade)
+
+        console.log(jogo?.getJogadorAtual().getLocalizacao().getNome())
+        console.log(jogo?.getTabuleiro().getBaralhoJogador().getDescarte())
+    }
+
+    function onClickAcao(acao: AcaoProps) {
+        console.log(acao)
+        setAcao(acao)
+    }
+
     const iniciarJogo = () => {
         const jogo = new Jogo(qtdJogadores, dificuldade)
         setJogo(jogo)
 
-        console.log(jogo.getCidade('Atlanta').getConexoes())
-        console.log(jogo.getCidade('Atlanta').temCentroPesquisa())
         jogo.getJogadores().forEach(jogador => {
             jogador.getCartas().forEach(carta => {
                 if (carta instanceof CartaCidade) {
@@ -32,13 +51,20 @@ export function App() {
         <div className="flex flex-col items-center justify-center h-screen w-screen relative">
             {jogo ? (
                 <>
-                    <Tabuleiro tabuleiro={jogo.getTabuleiro()} />
+                    <Tabuleiro
+                        tabuleiro={jogo.getTabuleiro()}
+                        onClickCidade={onClickCidade}
+                    />
                     <JogoIniciado
                         jogo={jogo}
                         onFinalizarTurno={() => setFase('turno')}
                     />
 
-                    {fase === 'turno' ? <Turno jogo={jogo} /> : <></>}
+                    {fase === 'turno' ? (
+                        <Turno jogo={jogo} onClickAcao={onClickAcao} />
+                    ) : (
+                        <></>
+                    )}
                 </>
             ) : (
                 <div className="p-6 shadow-md rounded">

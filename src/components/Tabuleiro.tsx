@@ -1,4 +1,4 @@
-import { COR_ENUM, NomeCidade } from '../classes/cidade'
+import { Cidade, COR_ENUM, NomeCidade } from '../classes/cidade'
 import { Tabuleiro as TabuleiroClasse } from '../classes/tabuleiro'
 
 const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
@@ -248,13 +248,10 @@ const mapeamentoCor = {
 
 interface TabuleiroProps {
     tabuleiro: TabuleiroClasse
+    onClickCidade: (cidade: Cidade) => void
 }
 
-export function Tabuleiro({ tabuleiro }: TabuleiroProps) {
-    function handleClickCidade(nome: NomeCidade) {
-        console.log(nome)
-    }
-
+export function Tabuleiro({ tabuleiro, onClickCidade }: TabuleiroProps) {
     return (
         <svg
             width="100%"
@@ -283,7 +280,7 @@ export function Tabuleiro({ tabuleiro }: TabuleiroProps) {
                     return cidadeConectada ? (
                         <line
                             className="drop-shadow-[0_0_6px_rgba(103,235,255,1)]"
-                            key={i}
+                            key={cidade.getNome()}
                             x1={x}
                             y1={y}
                             x2={cidadeConectada.x}
@@ -307,8 +304,8 @@ export function Tabuleiro({ tabuleiro }: TabuleiroProps) {
 
                 return (
                     <g
-                        key={i}
-                        onClick={() => handleClickCidade(cidade.nomeCidade)}
+                        key={cidade.nomeCidade}
+                        onClick={() => onClickCidade(cidadee)}
                         cursor="pointer"
                     >
                         <circle

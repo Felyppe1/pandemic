@@ -58,7 +58,7 @@ export class Jogador {
 
         this.cartas = this.cartas.filter(carta => carta !== cartaEncontrada)
 
-        baralho.descartarCarta(cartaEncontrada)
+        baralho.adicionarDescarte(cartaEncontrada)
     }
 
     private moverSe(cidade: Cidade) {

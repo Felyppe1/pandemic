@@ -6,7 +6,12 @@ import { CartaCidade, CartaEvento } from './classes/carta'
 import { Tabuleiro } from './components/Tabuleiro'
 import { Cidade } from './classes/cidade'
 
-export type AcaoProps = 'balsa' | 'voo direto' | null
+export type AcaoProps =
+    | 'balsa'
+    | 'voo direto'
+    | 'voo fretado'
+    | 'ponte aerea'
+    | null
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
@@ -17,14 +22,10 @@ export function App() {
     const [acao, setAcao] = useState<AcaoProps>(null)
 
     function onClickCidade(cidade: Cidade) {
-        if (acao === 'voo direto')
-            jogo
-                ?.getJogadorAtual()
-                .vooDireto(cidade, jogo.getTabuleiro().getBaralhoJogador())
-        else if (acao === 'balsa') jogo?.getJogadorAtual().balsa(cidade)
+        if (acao === 'voo direto') jogo!.moverJogadorPorVooDireto(cidade)
+        else if (acao === 'balsa') jogo!.moverJogadorPorBalsa(cidade)
 
-        console.log(jogo?.getJogadorAtual().getLocalizacao().getNome())
-        console.log(jogo?.getTabuleiro().getBaralhoJogador().getDescarte())
+        setAcao(null)
     }
 
     function onClickAcao(acao: AcaoProps) {
@@ -35,17 +36,13 @@ export function App() {
     const iniciarJogo = () => {
         const jogo = new Jogo(qtdJogadores, dificuldade)
         setJogo(jogo)
-
-        jogo.getJogadores().forEach(jogador => {
-            jogador.getCartas().forEach(carta => {
-                if (carta instanceof CartaCidade) {
-                    carta.getNome()
-                } else if (carta instanceof CartaEvento) {
-                    carta.getDescricao()
-                }
-            })
-        })
     }
+
+    console.log(jogo?.getJogadorAtual().getPersonagem().getNome())
+    console.log(jogo?.getJogadorAtual().getLocalizacao().getNome())
+    console.log(jogo?.getTabuleiro().getBaralhoJogador().getDescartes())
+    console.log(jogo?.getTabuleiro().getBaralhoInfeccao().getDescartes())
+    console.log(jogo?.getAcoesRestantes())
 
     return (
         <div className="flex flex-col items-center justify-center h-screen w-screen relative">

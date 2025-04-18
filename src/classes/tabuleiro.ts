@@ -49,11 +49,26 @@ export class Tabuleiro {
 
                 const cidade = this.getCidade(cartaInfeccao.getNome())
 
-                cidade.adicionarCubos(
-                    this.getCubosDoenca(cidade.getCor()),
-                    this.getCubos(cidade.getCor(), j),
-                )
+                cidade.adicionarCubos(this.getCuboDoenca(cidade.getCor()), j)
             }
+        }
+    }
+
+    infectarCidadesAoFinalDoTurno() {
+        for (let i = 0; i < this.baralhoInfeccao.getVelocidadeInfeccao(); i++) {
+            const carta = this.baralhoInfeccao.retirarCarta() as CartaInfeccao
+
+            const cidade = this.cidades.find(
+                cidade => cidade.getNome() === carta.getNome(),
+            )!
+
+            const cuboDoenca = this.cubosDoenca.find(
+                cubo => cubo.getCor() === cidade.getCor(),
+            )!
+
+            cidade.adicionarCubos(cuboDoenca, 1)
+
+            this.baralhoInfeccao.adicionarDescarte(carta)
         }
     }
 
@@ -61,17 +76,15 @@ export class Tabuleiro {
         return this.cidades.find(cidade => cidade.getNome() === nome)!
     }
 
-    getCubosDoenca(cor: COR_ENUM) {
+    getCuboDoenca(cor: COR_ENUM) {
         return this.cubosDoenca.find(cuboDoenca => cor === cuboDoenca.getCor())!
-    }
-
-    getCubos(cor: COR_ENUM, quantidade: number) {
-        const cuboDoenca = this.getCubosDoenca(cor)
-
-        return cuboDoenca.getCubos(quantidade)
     }
 
     getBaralhoJogador() {
         return this.baralhoJogador
+    }
+
+    getBaralhoInfeccao() {
+        return this.baralhoInfeccao
     }
 }

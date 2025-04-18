@@ -13,7 +13,7 @@ export class Cidade {
         this.nome = nome
         this.cor = cor
         this.conexoes = []
-        this.cubosDoenca = new Map()
+        this.cubosDoenca = new Map(Object.values(COR_ENUM).map(cor => [cor, 0]))
         this.temCentro = false
         this.jogadores = []
     }
@@ -46,7 +46,7 @@ export class Cidade {
     }
 
     adicionarCubos(cuboDoenca: CuboDoenca, quantidade: number) {
-        cuboDoenca.getCubos(quantidade)
+        cuboDoenca.retirarCubos(quantidade)
 
         const quantidadeAtual = this.cubosDoenca.get(cuboDoenca.getCor())!
 
@@ -58,7 +58,7 @@ export class Cidade {
             return
         }
 
-        this.cubosDoenca.set(cuboDoenca.getCor(), quantidade)
+        this.cubosDoenca.set(cuboDoenca.getCor(), quantidadeAtual + quantidade)
     }
 
     adicionarJogador(jogador: Jogador) {

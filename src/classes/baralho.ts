@@ -14,27 +14,31 @@ import { DIFICULDADE_ENUM } from './jogo'
 
 export abstract class Baralho {
     private cartas: Carta[]
-    private descarte: Carta[]
+    private descartes: Carta[]
 
     constructor() {
         this.cartas = []
-        this.descarte = []
+        this.descartes = []
     }
 
     adicionarCarta(carta: Carta) {
         this.cartas.push(carta)
     }
 
-    retirarCarta(): Carta {
-        if (this.cartas.length <= 2) {
-            throw new Error('O jogo acabou. Você perdeu!')
-        }
+    adicionarDescarte(carta: Carta) {
+        this.descartes.push(carta)
+    }
 
+    retirarCarta(): Carta {
         const cartaRetirada = this.cartas.pop()!
 
-        this.descarte.push(cartaRetirada)
-
         return cartaRetirada
+    }
+
+    retirarDescarte(): Carta {
+        const descarteRetirado = this.descartes.pop()!
+
+        return descarteRetirado
     }
 
     embaralharCartas() {
@@ -48,12 +52,8 @@ export abstract class Baralho {
         return [...this.cartas]
     }
 
-    descartarCarta(carta: Carta) {
-        this.descarte.push(carta)
-    }
-
-    getDescarte() {
-        return this.descarte
+    getDescartes() {
+        return this.descartes
     }
 }
 
@@ -101,7 +101,8 @@ export class BaralhoJogo extends Baralho {
 }
 
 export class BaralhoInfeccao extends Baralho {
-    private velocidadeInfeccao: number // TODO: assim não dá
+    private listaVelocidadeInfeccao: number[]
+    private indiceVelocidadeInfeccao: number
 
     constructor(cidades: Cidade[]) {
         super()
@@ -114,10 +115,11 @@ export class BaralhoInfeccao extends Baralho {
 
         this.embaralharCartas()
 
-        this.velocidadeInfeccao = 2
+        this.listaVelocidadeInfeccao = [2, 2, 2, 3, 3, 4, 4]
+        this.indiceVelocidadeInfeccao = 0
     }
 
     getVelocidadeInfeccao() {
-        return this.velocidadeInfeccao
+        return this.listaVelocidadeInfeccao[this.indiceVelocidadeInfeccao]
     }
 }

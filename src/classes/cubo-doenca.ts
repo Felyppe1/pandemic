@@ -17,7 +17,7 @@ export class CuboDoenca {
         return this.cor
     }
 
-    getCubos(quantidade: number) {
+    retirarCubos(quantidade: number) {
         if (this.cubosRestantes < quantidade) {
             throw new Error(`Acabou os cubos da cor ${this.cor}`)
         }

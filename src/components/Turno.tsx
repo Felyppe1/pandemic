@@ -51,6 +51,18 @@ export function Turno({ jogo, onClickAcao }: TurnoProps) {
                     >
                         Voo Direto
                     </button>
+                    <button
+                        onClick={() => onClickAcao('voo fretado')}
+                        className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
+                        Voo Fretado
+                    </button>
+                    <button
+                        onClick={() => onClickAcao('ponte aerea')}
+                        className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
+                        Ponte Aerea
+                    </button>
                 </div>
             )}
 
@@ -69,7 +81,7 @@ export function Turno({ jogo, onClickAcao }: TurnoProps) {
                                 </div>
                             ) : carta instanceof CartaEvento ? (
                                 <div
-                                    key={index}
+                                    key={carta.getNome()}
                                     className={`w-28 h-40 bg-orange-950 rounded-md shadow-md flex flex-col items-center gap-2 justify-center text-center text-sm font-semibold p-2 bg-yellow-950`}
                                 >
                                     <p>{carta.getNome()}</p>
@@ -84,28 +96,6 @@ export function Turno({ jogo, onClickAcao }: TurnoProps) {
                     </div>
                 </div>
             )}
-
-            {/* Bonecos nas cidades */}
-            {/* {jogo.getJogadores().map((jogador, i) => {
-                const cidade = jogador.getLocalizacao()
-                // const pos = cidade.getPosicao() // você pode definir posição x/y por cidade
-
-                return (
-                    <div
-                        key={i}
-                        className="absolute w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs"
-                        style={{
-                            left: '200px',
-                            top: '200px',
-                            // left: pos.x,
-                            // top: pos.y,
-                            transform: 'translate(-50%, -50%)'
-                        }}
-                    >
-                        {i + 1}
-                    </div>
-                )
-            })} */}
         </>
     )
 }

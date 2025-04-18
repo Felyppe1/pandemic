@@ -1,5 +1,6 @@
 import { Cidade, COR_ENUM, NomeCidade } from '../classes/cidade'
 import { Tabuleiro as TabuleiroClasse } from '../classes/tabuleiro'
+import { CuboDoenca } from './CuboDoenca'
 
 const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     {
@@ -344,6 +345,21 @@ export function Tabuleiro({ tabuleiro, onClickCidade }: TabuleiroProps) {
                                 />
                             </g>
                         ))}
+
+                        {/* Cubos na cidade */}
+                        {Array.from(cidadee.getCubosDoenca().entries()).flatMap(
+                            ([cor, quantidade]) =>
+                                Array.from({ length: quantidade }).map(
+                                    (_, i) => (
+                                        <CuboDoenca
+                                            key={`${cor}-${i}`}
+                                            x={cidade.x + i * 10}
+                                            y={cidade.y}
+                                            cor={mapeamentoCor[cor]}
+                                        />
+                                    ),
+                                ),
+                        )}
                     </g>
                 )
             })}

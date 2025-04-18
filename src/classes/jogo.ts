@@ -1,4 +1,4 @@
-import { NomeCidade } from './cidade'
+import { Cidade, NomeCidade } from './cidade'
 import { Jogador } from './jogador'
 import { escolherPersonagemAleatoriamente } from './personagem'
 import { Tabuleiro } from './tabuleiro'
@@ -38,12 +38,46 @@ export class Jogo {
             return new Jogador(
                 cartas,
                 escolherPersonagemAleatoriamente(),
-                this.tabuleiro.getCidade('Bogotá'),
+                this.tabuleiro.getCidade('Atlanta'),
             )
         })
 
         this.indiceJogadorAtual = 0
         this.acoesRestantes = 4
+    }
+
+    moverJogadorPorBalsa(cidade: Cidade) {
+        this.getJogadorAtual().balsa(cidade)
+
+        this.verificarTurno()
+    }
+
+    moverJogadorPorVooDireto(cidade: Cidade) {
+        this.getJogadorAtual().vooDireto(
+            cidade,
+            this.tabuleiro.getBaralhoJogador(),
+        )
+
+        this.verificarTurno()
+    }
+
+    private verificarTurno() {
+        this.acoesRestantes -= 1
+
+        if (this.acoesRestantes === 0) {
+            this.getJogadorAtual().comprarCartas(
+                this.tabuleiro.getBaralhoJogador(),
+            )
+
+            this.tabuleiro.infectarCidadesAoFinalDoTurno()
+        }
+
+        if (this.acoesRestantes === 0) {
+            this.indiceJogadorAtual =
+                (this.indiceJogadorAtual + 1) % this.jogadores.length
+
+            this.acoesRestantes = 4
+        }
     }
 
     getJogadores() {
@@ -56,11 +90,6 @@ export class Jogo {
 
     getAcoesRestantes() {
         return this.acoesRestantes
-    }
-
-    proximoJogador() {
-        this.indiceJogadorAtual =
-            ((this.indiceJogadorAtual + 1) % this.jogadores.length) - 1
     }
 
     getCidade(nome: NomeCidade) {

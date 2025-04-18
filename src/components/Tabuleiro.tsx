@@ -3,6 +3,126 @@ import { Tabuleiro as TabuleiroClasse } from '../classes/tabuleiro'
 
 const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     {
+        nomeCidade: 'San Francisco',
+        x: 400,
+        y: 385,
+    },
+    {
+        nomeCidade: 'Chicago',
+        x: 490,
+        y: 350,
+    },
+    {
+        nomeCidade: 'Atlanta',
+        x: 520,
+        y: 410,
+    },
+    {
+        nomeCidade: 'Montreal',
+        x: 570,
+        y: 340,
+    },
+    {
+        nomeCidade: 'New York',
+        x: 610,
+        y: 370,
+    },
+    {
+        nomeCidade: 'Washington',
+        x: 590,
+        y: 410,
+    },
+    {
+        nomeCidade: 'Madrid',
+        x: 770,
+        y: 390,
+    },
+    {
+        nomeCidade: 'London',
+        x: 780,
+        y: 320,
+    },
+    {
+        nomeCidade: 'Paris',
+        x: 830,
+        y: 350,
+    },
+    {
+        nomeCidade: 'Essen',
+        x: 860,
+        y: 300,
+    },
+    {
+        nomeCidade: 'Milan',
+        x: 880,
+        y: 340,
+    },
+    {
+        nomeCidade: 'St. Petersburg',
+        x: 940,
+        y: 290,
+    },
+    {
+        nomeCidade: 'Algiers',
+        x: 860,
+        y: 430,
+    },
+    {
+        nomeCidade: 'Cairo',
+        x: 910,
+        y: 445,
+    },
+    {
+        nomeCidade: 'Istanbul',
+        x: 920,
+        y: 390,
+    },
+    {
+        nomeCidade: 'Baghdad',
+        x: 980,
+        y: 420,
+    },
+    {
+        nomeCidade: 'Tehran',
+        x: 1035,
+        y: 370,
+    },
+    {
+        nomeCidade: 'Moscow',
+        x: 990,
+        y: 340,
+    },
+    {
+        nomeCidade: 'Riyadh',
+        x: 990,
+        y: 480,
+    },
+    {
+        nomeCidade: 'Karachi',
+        x: 1050,
+        y: 440,
+    },
+    {
+        nomeCidade: 'Delhi',
+        x: 1110,
+        y: 410,
+    },
+    {
+        nomeCidade: 'Mumbai',
+        x: 1060,
+        y: 495,
+    },
+    {
+        nomeCidade: 'Chennai',
+        x: 1120,
+        y: 535,
+    },
+    {
+        nomeCidade: 'Kolkata',
+        x: 1170,
+        y: 445,
+    },
+    {
         nomeCidade: 'São Paulo',
         x: 680,
         y: 630,
@@ -21,6 +141,91 @@ const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
         nomeCidade: 'Lima',
         x: 530,
         y: 630,
+    },
+    {
+        nomeCidade: 'Santiago',
+        x: 550,
+        y: 700,
+    },
+    {
+        nomeCidade: 'Mexico City',
+        x: 490,
+        y: 480,
+    },
+    {
+        nomeCidade: 'Miami',
+        x: 570,
+        y: 460,
+    },
+    {
+        nomeCidade: 'Los Angeles',
+        x: 400,
+        y: 450,
+    },
+    {
+        nomeCidade: 'Lagos',
+        x: 840,
+        y: 520,
+    },
+    {
+        nomeCidade: 'Kinshasa',
+        x: 885,
+        y: 590,
+    },
+    {
+        nomeCidade: 'Johannesburg',
+        x: 930,
+        y: 660,
+    },
+    {
+        nomeCidade: 'Beijing',
+        x: 1220,
+        y: 340,
+    },
+    {
+        nomeCidade: 'Seoul',
+        x: 1295,
+        y: 355,
+    },
+    {
+        nomeCidade: 'Tokyo',
+        x: 1330,
+        y: 395,
+    },
+    {
+        nomeCidade: 'Shanghai',
+        x: 1220,
+        y: 420,
+    },
+    {
+        nomeCidade: 'Osaka',
+        x: 1350,
+        y: 440,
+    },
+    {
+        nomeCidade: 'Taipei',
+        x: 1290,
+        y: 460,
+    },
+    {
+        nomeCidade: 'Hong Kong',
+        x: 1230,
+        y: 485,
+    },
+    {
+        nomeCidade: 'Bangkok',
+        x: 1180,
+        y: 505,
+    },
+    {
+        nomeCidade: 'Manila',
+        x: 1320,
+        y: 535,
+    },
+    {
+        nomeCidade: 'Ho Chi Minh City',
+        x: 1230,
+        y: 555,
     },
     {
         nomeCidade: 'Jakarta',

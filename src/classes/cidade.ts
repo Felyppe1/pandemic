@@ -62,6 +62,24 @@ export class Cidade {
         this.cubosDoenca.set(cor, quantidadeAtual + 1)
     }
 
+    tratarDoencas(cor: COR_ENUM, temCura: boolean) {
+        const quantidadeCubosDoenca = this.cubosDoenca.get(cor)!
+
+        if (quantidadeCubosDoenca === 0) {
+            throw new Error(`Não há doenças da cor ${cor} nessa cidade`)
+        }
+
+        if (temCura) {
+            this.cubosDoenca.set(cor, 0)
+
+            return quantidadeCubosDoenca
+        }
+
+        this.cubosDoenca.set(cor, quantidadeCubosDoenca - 1)
+
+        return 1
+    }
+
     adicionarJogador(jogador: Jogador) {
         if (!this.jogadores.includes(jogador)) {
             this.jogadores.push(jogador)

@@ -76,6 +76,15 @@ export class Jogo {
         this.verificarTurno()
     }
 
+    tratarDoenca() {
+        this.getTabuleiro().tratarDoenca(
+            this.getJogadorAtual().getCorDaCidadeAtual(),
+            this.getJogadorAtual(),
+        )
+
+        this.verificarTurno()
+    }
+
     private verificarTurno() {
         this.acoesRestantes -= 1
 
@@ -85,9 +94,7 @@ export class Jogo {
             )
 
             this.tabuleiro.infectarCidadesAoFinalDoTurno()
-        }
 
-        if (this.acoesRestantes === 0) {
             this.indiceJogadorAtual =
                 (this.indiceJogadorAtual + 1) % this.jogadores.length
 

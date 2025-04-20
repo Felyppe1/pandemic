@@ -1,5 +1,7 @@
 import { COR_ENUM } from './cidade'
 
+const MAXIMO_CUBOS = 24
+
 export class Doenca {
     private cor: COR_ENUM
     private cubosRestantes: number
@@ -8,13 +10,23 @@ export class Doenca {
 
     constructor(cor: COR_ENUM) {
         this.cor = cor
-        this.cubosRestantes = 24
+        this.cubosRestantes = MAXIMO_CUBOS
         this.encontrouCura = false
         this.estaErradicado = false
     }
 
     getCor() {
         return this.cor
+    }
+
+    adicionarCubos(quantidade: number) {
+        if (this.cubosRestantes + quantidade > MAXIMO_CUBOS) {
+            throw new Error(
+                `Não é possível adicionar mais que ${MAXIMO_CUBOS} cubos`,
+            )
+        }
+
+        this.cubosRestantes += quantidade
     }
 
     retirarCubos(quantidade: number) {
@@ -25,6 +37,14 @@ export class Doenca {
         this.cubosRestantes = this.cubosRestantes - quantidade
 
         return quantidade
+    }
+
+    temCuboEmCidades() {
+        return this.cubosRestantes !== MAXIMO_CUBOS
+    }
+
+    getCubosRestantes() {
+        return this.cubosRestantes
     }
 
     getEncontrouCura() {

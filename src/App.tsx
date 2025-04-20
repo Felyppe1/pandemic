@@ -13,11 +13,14 @@ export type AcaoProps =
     | 'ponte aerea'
     | null
 
+export type OutraAcao = 'tratar doenca'
+
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
     const [jogo, setJogo] = useState<Jogo | null>(null)
     const [qtdJogadores, setQtdJogadores] = useState(2)
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
+    const [teste, setTeste] = useState(0)
 
     const [acao, setAcao] = useState<AcaoProps>(null)
 
@@ -34,11 +37,18 @@ export function App() {
         setAcao(state => (state === acao ? null : acao))
     }
 
+    function onClickOutraAcao(acao: OutraAcao) {
+        if (acao === 'tratar doenca') jogo!.tratarDoenca()
+
+        setTeste(state => state + 1)
+    }
+
     const iniciarJogo = () => {
         const jogo = new Jogo(qtdJogadores, dificuldade)
         setJogo(jogo)
     }
 
+    console.clear()
     console.log(
         'Personagem do jogador atual',
         jogo?.getJogadorAtual().getPersonagem().getNome(),
@@ -57,6 +67,15 @@ export function App() {
     )
     console.log('Ações restantes', jogo?.getAcoesRestantes())
     console.log('Cartas do jogador atual', jogo?.getJogadorAtual().getCartas())
+    console.log(
+        'Quantidade de doencas',
+        jogo
+            ?.getTabuleiro()
+            .getDoencas()
+            .forEach(doenca =>
+                console.log(doenca.getCor(), doenca.getCubosRestantes()),
+            ),
+    )
 
     return (
         <div className="flex flex-col items-center justify-center h-screen w-screen relative">
@@ -76,6 +95,7 @@ export function App() {
                         <Turno
                             jogo={jogo}
                             acaoSelecionada={acao}
+                            onClickOutraAcao={onClickOutraAcao}
                             onClickAcao={onClickAcao}
                         />
                     ) : (

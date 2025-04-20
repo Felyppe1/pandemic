@@ -2,13 +2,17 @@ import { useState } from 'react'
 import { CartaCidade, CartaEvento } from '../classes/carta'
 import { Jogo } from '../classes/jogo'
 import { COR_ENUM } from '../classes/cidade'
-import { AcaoProps } from '../App'
+import { AcaoProps, OutraAcao } from '../App'
 
 const acoes: { acao: AcaoProps; label: string }[] = [
     { acao: 'balsa', label: 'Automóvel / Balsa' },
     { acao: 'voo direto', label: 'Voo Direto' },
     { acao: 'voo fretado', label: 'Voo Fretado' },
     { acao: 'ponte aerea', label: 'Ponte Aérea' },
+]
+
+const outrasAcoes: { acao: OutraAcao; label: string }[] = [
+    { acao: 'tratar doenca', label: 'Tratar Doença' },
 ]
 
 const mapeamentoCor = {
@@ -22,9 +26,15 @@ interface TurnoProps {
     jogo: Jogo
     acaoSelecionada: AcaoProps
     onClickAcao: (acao: AcaoProps) => void
+    onClickOutraAcao: (acao: OutraAcao) => void
 }
 
-export function Turno({ jogo, acaoSelecionada, onClickAcao }: TurnoProps) {
+export function Turno({
+    jogo,
+    acaoSelecionada,
+    onClickAcao,
+    onClickOutraAcao,
+}: TurnoProps) {
     const [esconder, setEsconder] = useState(false)
     const jogadorAtual = jogo.getJogadorAtual()
 
@@ -42,10 +52,10 @@ export function Turno({ jogo, acaoSelecionada, onClickAcao }: TurnoProps) {
                 {esconder ? 'Mostrar opções' : 'Esconder opções'}
             </button>
 
-            {/* Ações disponíveis */}
+            {/* Ações de movimento */}
             {!esconder && (
-                <div className="absolute top-1/3 left-4 bg-opacity-80 p-4 rounded shadow flex flex-col gap-2">
-                    <h2 className="font-bold mb-2">Ações</h2>
+                <div className="absolute top-1/6 left-4 bg-opacity-80 p-4 rounded shadow flex flex-col gap-2">
+                    <h2 className="font-bold mb-2">Ações de Movimento</h2>
                     {acoes.map(({ acao, label }) => (
                         <button
                             key={acao}
@@ -55,6 +65,22 @@ export function Turno({ jogo, acaoSelecionada, onClickAcao }: TurnoProps) {
                                     ? 'bg-blue-700 ring-2 ring-blue-300'
                                     : 'bg-blue-500 hover:bg-blue-600'
                             }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            {/* Outras Ações */}
+            {!esconder && (
+                <div className="absolute top-1/2 left-4 bg-opacity-80 p-4 rounded shadow flex flex-col gap-2">
+                    <h2 className="font-bold mb-2">Outras Ações</h2>
+                    {outrasAcoes.map(({ acao, label }) => (
+                        <button
+                            key={acao}
+                            onClick={() => onClickOutraAcao(acao)}
+                            className={`px-3 py-1 rounded transition text-white ${'bg-blue-500 hover:bg-blue-600'}`}
                         >
                             {label}
                         </button>

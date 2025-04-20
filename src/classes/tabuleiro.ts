@@ -3,6 +3,7 @@ import { BaralhoInfeccao, BaralhoJogo } from './baralho'
 import { CartaInfeccao } from './carta'
 import { Cidade, COR_ENUM, NomeCidade } from './cidade'
 import { Doenca } from './doenca'
+import { Jogador } from './jogador'
 import { DIFICULDADE_ENUM } from './jogo'
 
 export class Tabuleiro {
@@ -81,12 +82,35 @@ export class Tabuleiro {
         return this.baralhoJogador.retirarCarta()
     }
 
+    tratarDoenca(cor: COR_ENUM, jogador: Jogador) {
+        const doenca = this.getDoenca(cor)
+
+        const quantidadeDoencasTratadas = jogador.tratarDoencas(
+            cor,
+            doenca.getEncontrouCura(),
+        )
+
+        doenca.adicionarCubos(quantidadeDoencasTratadas)
+
+        if (!this.temCuboEmCidades(cor)) {
+            doenca.erradicar()
+        }
+    }
+
+    temCuboEmCidades(cor: COR_ENUM) {
+        return this.getDoenca(cor).temCuboEmCidades()
+    }
+
     getCidade(nome: NomeCidade) {
         return this.cidades.find(cidade => cidade.getNome() === nome)!
     }
 
     getDoenca(cor: COR_ENUM) {
         return this.doencas.get(cor)!
+    }
+
+    getDoencas() {
+        return this.doencas
     }
 
     getBaralhoJogador() {

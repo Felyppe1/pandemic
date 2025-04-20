@@ -1,6 +1,6 @@
 import { BaralhoJogo } from './baralho'
 import { Carta, CartaCidade, CartaJogador } from './carta'
-import { Cidade } from './cidade'
+import { Cidade, COR_ENUM } from './cidade'
 import { Personagem } from './personagem'
 
 export class Jogador {
@@ -95,10 +95,18 @@ export class Jogador {
         this.moverSe(cidadeDestino)
     }
 
+    tratarDoencas(cor: COR_ENUM, temCura: boolean) {
+        return this.getLocalizacao().tratarDoencas(cor, temCura)
+    }
+
     private moverSe(cidade: Cidade) {
         this.localizacao.removerJogador(this)
         this.localizacao = cidade
         cidade.adicionarJogador(this)
+    }
+
+    getCorDaCidadeAtual() {
+        return this.localizacao.getCor()
     }
 
     getCartas() {

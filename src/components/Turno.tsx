@@ -4,6 +4,13 @@ import { Jogo } from '../classes/jogo'
 import { COR_ENUM } from '../classes/cidade'
 import { AcaoProps } from '../App'
 
+const acoes: { acao: AcaoProps; label: string }[] = [
+    { acao: 'balsa', label: 'Automóvel / Balsa' },
+    { acao: 'voo direto', label: 'Voo Direto' },
+    { acao: 'voo fretado', label: 'Voo Fretado' },
+    { acao: 'ponte aerea', label: 'Ponte Aérea' },
+]
+
 const mapeamentoCor = {
     [COR_ENUM.AMARELO]: 'bg-yellow-400',
     [COR_ENUM.AZUL]: 'bg-blue-600',
@@ -13,10 +20,11 @@ const mapeamentoCor = {
 
 interface TurnoProps {
     jogo: Jogo
+    acaoSelecionada: AcaoProps
     onClickAcao: (acao: AcaoProps) => void
 }
 
-export function Turno({ jogo, onClickAcao }: TurnoProps) {
+export function Turno({ jogo, acaoSelecionada, onClickAcao }: TurnoProps) {
     const [esconder, setEsconder] = useState(false)
     const jogadorAtual = jogo.getJogadorAtual()
 
@@ -38,31 +46,19 @@ export function Turno({ jogo, onClickAcao }: TurnoProps) {
             {!esconder && (
                 <div className="absolute top-1/3 left-4 bg-opacity-80 p-4 rounded shadow flex flex-col gap-2">
                     <h2 className="font-bold mb-2">Ações</h2>
-                    {/* Vai ser um radio */}
-                    <button
-                        onClick={() => onClickAcao('balsa')}
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
-                    >
-                        Automóvel / Balsa
-                    </button>
-                    <button
-                        onClick={() => onClickAcao('voo direto')}
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
-                    >
-                        Voo Direto
-                    </button>
-                    <button
-                        onClick={() => onClickAcao('voo fretado')}
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
-                    >
-                        Voo Fretado
-                    </button>
-                    <button
-                        onClick={() => onClickAcao('ponte aerea')}
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
-                    >
-                        Ponte Aerea
-                    </button>
+                    {acoes.map(({ acao, label }) => (
+                        <button
+                            key={acao}
+                            onClick={() => onClickAcao(acao)}
+                            className={`px-3 py-1 rounded transition text-white ${
+                                acaoSelecionada === acao
+                                    ? 'bg-blue-700 ring-2 ring-blue-300'
+                                    : 'bg-blue-500 hover:bg-blue-600'
+                            }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
                 </div>
             )}
 

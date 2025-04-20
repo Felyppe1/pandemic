@@ -61,6 +61,21 @@ export class Jogo {
         this.verificarTurno()
     }
 
+    moverJogadorPorVooFretado(cidade: Cidade) {
+        this.getJogadorAtual().vooFretado(
+            cidade,
+            this.tabuleiro.getBaralhoJogador(),
+        )
+
+        this.verificarTurno()
+    }
+
+    moverJogadorPorPonteAerea(cidade: Cidade) {
+        this.getJogadorAtual().ponteAerea(cidade)
+
+        this.verificarTurno()
+    }
+
     private verificarTurno() {
         this.acoesRestantes -= 1
 

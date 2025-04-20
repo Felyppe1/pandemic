@@ -24,13 +24,14 @@ export function App() {
     function onClickCidade(cidade: Cidade) {
         if (acao === 'voo direto') jogo!.moverJogadorPorVooDireto(cidade)
         else if (acao === 'balsa') jogo!.moverJogadorPorBalsa(cidade)
+        else if (acao === 'voo fretado') jogo!.moverJogadorPorVooFretado(cidade)
+        else if (acao === 'ponte aerea') jogo!.moverJogadorPorPonteAerea(cidade)
 
         setAcao(null)
     }
 
     function onClickAcao(acao: AcaoProps) {
-        console.log(acao)
-        setAcao(acao)
+        setAcao(state => (state === acao ? null : acao))
     }
 
     const iniciarJogo = () => {
@@ -63,6 +64,7 @@ export function App() {
                 <>
                     <Tabuleiro
                         tabuleiro={jogo.getTabuleiro()}
+                        jogadores={jogo.getJogadores()}
                         onClickCidade={onClickCidade}
                     />
                     <JogoIniciado
@@ -71,7 +73,11 @@ export function App() {
                     />
 
                     {fase === 'turno' ? (
-                        <Turno jogo={jogo} onClickAcao={onClickAcao} />
+                        <Turno
+                            jogo={jogo}
+                            acaoSelecionada={acao}
+                            onClickAcao={onClickAcao}
+                        />
                     ) : (
                         <></>
                     )}

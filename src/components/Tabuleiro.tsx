@@ -1,6 +1,8 @@
 import { Cidade, COR_ENUM, NomeCidade } from '../classes/cidade'
+import { Jogador } from '../classes/jogador'
 import { Tabuleiro as TabuleiroClasse } from '../classes/tabuleiro'
 import { CuboDoenca } from './CuboDoenca'
+import { Peao } from './Peao'
 
 const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     {
@@ -247,12 +249,19 @@ const mapeamentoCor = {
     [COR_ENUM.VERMELHO]: '#c70036',
 }
 
+const corJogadores = ['#00b40f', '#eb7700', '#00e3e0', '#ff00fe']
+
 interface TabuleiroProps {
     tabuleiro: TabuleiroClasse
+    jogadores: Jogador[]
     onClickCidade: (cidade: Cidade) => void
 }
 
-export function Tabuleiro({ tabuleiro, onClickCidade }: TabuleiroProps) {
+export function Tabuleiro({
+    tabuleiro,
+    jogadores,
+    onClickCidade,
+}: TabuleiroProps) {
     return (
         <svg
             width="100%"
@@ -328,23 +337,26 @@ export function Tabuleiro({ tabuleiro, onClickCidade }: TabuleiroProps) {
                         </text>
 
                         {/* Jogadores na cidade */}
-                        {cidadee.getJogadores().map((jogador, idx) => (
-                            <g
-                                key={idx}
-                                className={``}
-                                transform={`translate(${cidade.x - idx * 8}, ${cidade.y - 40})`}
-                            >
-                                <path
-                                    d="M 20 0 C 26 0, 30 5, 30 12 C 30 17, 27 22, 22 24 L 22 30 L 28 45
-                                    C 29 48, 26 50, 23 50 H 17 C 14 50, 11 48, 12 45 L 18 30 L 18 24
-                                    C 13 22, 10 17, 10 12 C 10 5, 14 0, 20 0 Z"
-                                    fill="blue"
-                                    stroke="white"
-                                    strokeWidth="2"
-                                    transform="scale(0.8)"
+                        {cidadee.getJogadores().map((jogador, idx) => {
+                            const total = cidadee.getJogadores().length
+                            const spacing = 10
+                            const offset = ((total + 1.5) * spacing) / 2
+                            const x = cidade.x - offset + idx * spacing
+
+                            const indice = jogadores.findIndex(
+                                j => j === jogador,
+                            )
+
+                            return (
+                                <Peao
+                                    key={idx}
+                                    x={x}
+                                    y={cidade.y - 40}
+                                    scale={0.8}
+                                    cor={corJogadores[indice]}
                                 />
-                            </g>
-                        ))}
+                            )
+                        })}
 
                         {/* Cubos na cidade */}
                         {Array.from(cidadee.getCubosDoenca().entries()).flatMap(
@@ -353,8 +365,8 @@ export function Tabuleiro({ tabuleiro, onClickCidade }: TabuleiroProps) {
                                     (_, i) => (
                                         <CuboDoenca
                                             key={`${cor}-${i}`}
-                                            x={cidade.x + i * 10}
-                                            y={cidade.y}
+                                            x={cidade.x - i * 10}
+                                            y={cidade.y + 4}
                                             cor={mapeamentoCor[cor]}
                                         />
                                     ),

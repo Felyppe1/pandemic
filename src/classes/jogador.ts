@@ -27,8 +27,8 @@ export class Jogador {
         this.cartas.push(carta1!, carta2!)
     }
 
-    balsa(cidade: Cidade) {
-        const eConexao = this.localizacao.buscarCidadeConectada(cidade)
+    balsa(cidadeDestino: Cidade) {
+        const eConexao = this.localizacao.buscarCidadeConectada(cidadeDestino)
 
         if (!eConexao) {
             throw new Error(
@@ -36,14 +36,14 @@ export class Jogador {
             )
         }
 
-        this.moverSe(cidade)
+        this.moverSe(cidadeDestino)
     }
 
-    vooDireto(cidade: Cidade, baralho: BaralhoJogo) {
+    vooDireto(cidadeDestino: Cidade, baralho: BaralhoJogo) {
         const cartaEncontrada = this.cartas.find(
             carta =>
                 carta instanceof CartaCidade &&
-                carta.getNome() === cidade.getNome(),
+                carta.getNome() === cidadeDestino.getNome(),
         )
 
         if (!cartaEncontrada) {
@@ -52,11 +52,47 @@ export class Jogador {
             )
         }
 
-        this.moverSe(cidade)
+        this.moverSe(cidadeDestino)
 
         this.cartas = this.cartas.filter(carta => carta !== cartaEncontrada)
 
         baralho.adicionarDescarte(cartaEncontrada)
+    }
+
+    vooFretado(cidadeDestino: Cidade, baralho: BaralhoJogo) {
+        const cartaEncontrada = this.cartas.find(
+            carta =>
+                carta instanceof CartaCidade &&
+                carta.getNome() === this.localizacao.getNome(),
+        )
+
+        if (!cartaEncontrada) {
+            throw Error(
+                'Você não tem a carta da sua cidade atual para fazer voo fretado',
+            )
+        }
+
+        this.moverSe(cidadeDestino)
+
+        this.cartas = this.cartas.filter(carta => carta !== cartaEncontrada)
+
+        baralho.adicionarDescarte(cartaEncontrada)
+    }
+
+    ponteAerea(cidadeDestino: Cidade) {
+        if (!this.localizacao.temCentroPesquisa()) {
+            throw new Error(
+                'Sua cidade atual não tem centro de pesquisa para fazer ponte aérea',
+            )
+        }
+
+        if (!cidadeDestino.temCentroPesquisa()) {
+            throw new Error(
+                `A cidade ${cidadeDestino.getNome()} não tem centro de pesquisa para fazer ponte aérea`,
+            )
+        }
+
+        this.moverSe(cidadeDestino)
     }
 
     private moverSe(cidade: Cidade) {

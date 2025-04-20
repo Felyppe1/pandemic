@@ -57,7 +57,7 @@ export abstract class Baralho {
     }
 }
 
-export class BaralhoJogo extends Baralho {
+export class BaralhoJogador extends Baralho {
     constructor(cidades: Cidade[]) {
         super()
 

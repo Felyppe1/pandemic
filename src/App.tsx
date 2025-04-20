@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { DIFICULDADE_ENUM, Jogo } from './classes/jogo'
 import { JogoIniciado } from './components/JogoIniciado'
 import { Turno } from './components/Turno'
-import { CartaCidade, CartaEvento } from './classes/carta'
 import { Tabuleiro } from './components/Tabuleiro'
 import { Cidade } from './classes/cidade'
 
@@ -59,19 +58,18 @@ export function App() {
     )
     console.log(
         'Cartas de descarte do baralho do jogador',
-        jogo?.getTabuleiro().getBaralhoJogador().getDescartes(),
+        jogo?.getBaralhoJogador().getDescartes(),
     )
     console.log(
         'Cartas de descarte do baralho de infecção',
-        jogo?.getTabuleiro().getBaralhoInfeccao().getDescartes(),
+        jogo?.getBaralhoInfeccao().getDescartes(),
     )
     console.log('Ações restantes', jogo?.getAcoesRestantes())
     console.log('Cartas do jogador atual', jogo?.getJogadorAtual().getCartas())
     console.log(
         'Quantidade de doencas',
         jogo
-            ?.getTabuleiro()
-            .getDoencas()
+            ?.getDoencas()
             .forEach(doenca =>
                 console.log(doenca.getCor(), doenca.getCubosRestantes()),
             ),
@@ -81,11 +79,7 @@ export function App() {
         <div className="flex flex-col items-center justify-center h-screen w-screen relative">
             {jogo ? (
                 <>
-                    <Tabuleiro
-                        tabuleiro={jogo.getTabuleiro()}
-                        jogadores={jogo.getJogadores()}
-                        onClickCidade={onClickCidade}
-                    />
+                    <Tabuleiro jogo={jogo} onClickCidade={onClickCidade} />
                     <JogoIniciado
                         jogo={jogo}
                         onFinalizarTurno={() => setFase('turno')}

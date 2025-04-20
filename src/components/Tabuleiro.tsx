@@ -1,6 +1,5 @@
 import { Cidade, COR_ENUM, NomeCidade } from '../classes/cidade'
-import { Jogador } from '../classes/jogador'
-import { Tabuleiro as TabuleiroClasse } from '../classes/tabuleiro'
+import { Jogo } from '../classes/jogo'
 import { CuboDoenca } from './CuboDoenca'
 import { Peao } from './Peao'
 
@@ -252,16 +251,11 @@ const mapeamentoCor = {
 const corJogadores = ['#00b40f', '#eb7700', '#00e3e0', '#ff00fe']
 
 interface TabuleiroProps {
-    tabuleiro: TabuleiroClasse
-    jogadores: Jogador[]
+    jogo: Jogo
     onClickCidade: (cidade: Cidade) => void
 }
 
-export function Tabuleiro({
-    tabuleiro,
-    jogadores,
-    onClickCidade,
-}: TabuleiroProps) {
+export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
     const linhasRenderizadas = new Set<string>()
 
     return (
@@ -281,7 +275,7 @@ export function Tabuleiro({
 
             {/* Conexões */}
             {coordenadasCidades.map(({ nomeCidade, x, y }, i) => {
-                const cidade = tabuleiro.getCidade(nomeCidade)
+                const cidade = jogo.getCidade(nomeCidade)
                 const cidadesConectadas = cidade.getConexoes()
 
                 return cidadesConectadas.map(cidade => {
@@ -318,10 +312,10 @@ export function Tabuleiro({
                 const cor =
                     'fill-' +
                     mapeamentoCor[
-                        tabuleiro.getCidade(coordCidade.nomeCidade).getCor()
+                        jogo.getCidade(coordCidade.nomeCidade).getCor()
                     ]
 
-                const cidade = tabuleiro.getCidade(coordCidade.nomeCidade)
+                const cidade = jogo.getCidade(coordCidade.nomeCidade)
 
                 return (
                     <g
@@ -354,9 +348,9 @@ export function Tabuleiro({
                             const offset = ((total + 1.5) * spacing) / 2
                             const x = coordCidade.x - offset + idx * spacing
 
-                            const indice = jogadores.findIndex(
-                                j => j === jogador,
-                            )
+                            const indice = jogo
+                                .getJogadores()
+                                .findIndex(j => j === jogador)
 
                             return (
                                 <Peao

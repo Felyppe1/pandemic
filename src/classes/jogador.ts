@@ -1,4 +1,4 @@
-import { Baralho, BaralhoJogo } from './baralho'
+import { Baralho, BaralhoJogador } from './baralho'
 import { Carta, CartaCidade, CartaJogador } from './carta'
 import { Cidade, COR_ENUM } from './cidade'
 import { Personagem } from './personagem'
@@ -16,7 +16,7 @@ export class Jogador {
         localizacao.adicionarJogador(this)
     }
 
-    comprarCartas(baralho: BaralhoJogo) {
+    comprarCartas(baralho: BaralhoJogador) {
         if (this.cartas.length === 7) {
             throw new Error('Jogador já tem 7 cartas')
         }
@@ -39,7 +39,7 @@ export class Jogador {
         this.moverSe(cidadeDestino)
     }
 
-    vooDireto(cidadeDestino: Cidade, baralho: BaralhoJogo) {
+    vooDireto(cidadeDestino: Cidade, baralho: BaralhoJogador) {
         const cartaEncontrada = this.cartas.find(
             carta =>
                 carta instanceof CartaCidade &&
@@ -57,7 +57,7 @@ export class Jogador {
         this.moverSe(cidadeDestino)
     }
 
-    vooFretado(cidadeDestino: Cidade, baralho: BaralhoJogo) {
+    vooFretado(cidadeDestino: Cidade, baralho: BaralhoJogador) {
         const cartaEncontrada = this.cartas.find(
             carta =>
                 carta instanceof CartaCidade &&

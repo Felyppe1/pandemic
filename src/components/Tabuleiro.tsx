@@ -262,6 +262,8 @@ export function Tabuleiro({
     jogadores,
     onClickCidade,
 }: TabuleiroProps) {
+    const linhasRenderizadas = new Set<string>()
+
     return (
         <svg
             width="100%"
@@ -283,6 +285,15 @@ export function Tabuleiro({
                 const cidadesConectadas = cidade.getConexoes()
 
                 return cidadesConectadas.map(cidade => {
+                    const nomeA = nomeCidade
+                    const nomeB = cidade.getNome()
+
+                    const chave = [nomeA, nomeB].sort().join('-')
+
+                    if (linhasRenderizadas.has(chave)) return null
+
+                    linhasRenderizadas.add(chave)
+
                     const cidadeConectada = coordenadasCidades.find(
                         elemento => elemento.nomeCidade === cidade.getNome(),
                     )
@@ -303,45 +314,45 @@ export function Tabuleiro({
             })}
 
             {/* Cidades */}
-            {coordenadasCidades.map((cidade, i) => {
+            {coordenadasCidades.map((coordCidade, i) => {
                 const cor =
                     'fill-' +
                     mapeamentoCor[
-                        tabuleiro.getCidade(cidade.nomeCidade).getCor()
+                        tabuleiro.getCidade(coordCidade.nomeCidade).getCor()
                     ]
 
-                const cidadee = tabuleiro.getCidade(cidade.nomeCidade)
+                const cidade = tabuleiro.getCidade(coordCidade.nomeCidade)
 
                 return (
                     <g
-                        key={cidade.nomeCidade}
-                        onClick={() => onClickCidade(cidadee)}
+                        key={coordCidade.nomeCidade}
+                        onClick={() => onClickCidade(cidade)}
                         cursor="pointer"
                     >
                         <circle
                             className={`drop-shadow-[0_0_6px_rgba(255,255,255,1)] ${cor}`}
-                            cx={cidade.x}
-                            cy={cidade.y}
+                            cx={coordCidade.x}
+                            cy={coordCidade.y}
                             r="10"
-                            fill={mapeamentoCor[cidadee.getCor()]}
+                            fill={mapeamentoCor[cidade.getCor()]}
                             strokeWidth="2"
                         />
                         <text
-                            x={cidade.x + 15}
-                            y={cidade.y + 5}
+                            x={coordCidade.x + 15}
+                            y={coordCidade.y + 5}
                             fontSize="14"
                             fill="#ffffff"
                             fontFamily="sans-serif"
                         >
-                            {cidade.nomeCidade}
+                            {coordCidade.nomeCidade}
                         </text>
 
                         {/* Jogadores na cidade */}
-                        {cidadee.getJogadores().map((jogador, idx) => {
-                            const total = cidadee.getJogadores().length
+                        {cidade.getJogadores().map((jogador, idx) => {
+                            const total = cidade.getJogadores().length
                             const spacing = 10
                             const offset = ((total + 1.5) * spacing) / 2
-                            const x = cidade.x - offset + idx * spacing
+                            const x = coordCidade.x - offset + idx * spacing
 
                             const indice = jogadores.findIndex(
                                 j => j === jogador,
@@ -351,7 +362,7 @@ export function Tabuleiro({
                                 <Peao
                                     key={idx}
                                     x={x}
-                                    y={cidade.y - 40}
+                                    y={coordCidade.y - 40}
                                     scale={0.8}
                                     cor={corJogadores[indice]}
                                 />
@@ -359,14 +370,14 @@ export function Tabuleiro({
                         })}
 
                         {/* Cubos na cidade */}
-                        {Array.from(cidadee.getCubosDoenca().entries()).flatMap(
+                        {Array.from(cidade.getCubosDoenca().entries()).flatMap(
                             ([cor, quantidade]) =>
                                 Array.from({ length: quantidade }).map(
                                     (_, i) => (
                                         <CuboDoenca
                                             key={`${cor}-${i}`}
-                                            x={cidade.x - i * 10}
-                                            y={cidade.y + 4}
+                                            x={coordCidade.x - i * 10}
+                                            y={coordCidade.y + 4}
                                             cor={mapeamentoCor[cor]}
                                         />
                                     ),

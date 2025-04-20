@@ -39,7 +39,7 @@ export class Doenca {
         return quantidade
     }
 
-    temCuboEmCidades() {
+    temCuboEmAlgumaCidade() {
         return this.cubosRestantes !== MAXIMO_CUBOS
     }
 
@@ -47,7 +47,7 @@ export class Doenca {
         return this.cubosRestantes
     }
 
-    getEncontrouCura() {
+    estaCurada() {
         return this.encontrouCura
     }
 

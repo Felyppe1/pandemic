@@ -82,23 +82,14 @@ export class Tabuleiro {
         return this.baralhoJogador.retirarCarta()
     }
 
-    tratarDoenca(cor: COR_ENUM, jogador: Jogador) {
+    tratarDoenca(jogador: Jogador) {
+        const cor = jogador.getCorDaCidadeAtual()
+
         const doenca = this.getDoenca(cor)
 
-        const quantidadeDoencasTratadas = jogador.tratarDoencas(
-            cor,
-            doenca.getEncontrouCura(),
-        )
+        const cidade = jogador.getLocalizacao()
 
-        doenca.adicionarCubos(quantidadeDoencasTratadas)
-
-        if (!this.temCuboEmCidades(cor)) {
-            doenca.erradicar()
-        }
-    }
-
-    temCuboEmCidades(cor: COR_ENUM) {
-        return this.getDoenca(cor).temCuboEmCidades()
+        cidade.tratarDoencas(doenca)
     }
 
     getCidade(nome: NomeCidade) {

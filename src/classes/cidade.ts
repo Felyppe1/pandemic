@@ -1,3 +1,4 @@
+import { Doenca } from './doenca'
 import { Jogador } from './jogador'
 
 export class Cidade {
@@ -62,22 +63,32 @@ export class Cidade {
         this.cubosDoenca.set(cor, quantidadeAtual + 1)
     }
 
-    tratarDoencas(cor: COR_ENUM, temCura: boolean) {
+    tratarDoencas(doenca: Doenca) {
+        const cor = doenca.getCor()
+
         const quantidadeCubosDoenca = this.cubosDoenca.get(cor)!
+
+        let doencasCuradas: number | undefined
 
         if (quantidadeCubosDoenca === 0) {
             throw new Error(`Não há doenças da cor ${cor} nessa cidade`)
         }
 
-        if (temCura) {
+        if (doenca.estaCurada()) {
             this.cubosDoenca.set(cor, 0)
 
-            return quantidadeCubosDoenca
+            doencasCuradas = quantidadeCubosDoenca
+
+            return
         }
 
         this.cubosDoenca.set(cor, quantidadeCubosDoenca - 1)
 
-        return 1
+        doenca.adicionarCubos(doencasCuradas ?? 1)
+
+        if (!doenca.temCuboEmAlgumaCidade() && doenca.estaCurada()) {
+            doenca.erradicar()
+        }
     }
 
     adicionarJogador(jogador: Jogador) {

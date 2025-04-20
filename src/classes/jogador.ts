@@ -1,4 +1,4 @@
-import { BaralhoJogo } from './baralho'
+import { Baralho, BaralhoJogo } from './baralho'
 import { Carta, CartaCidade, CartaJogador } from './carta'
 import { Cidade, COR_ENUM } from './cidade'
 import { Personagem } from './personagem'
@@ -52,11 +52,9 @@ export class Jogador {
             )
         }
 
+        this.descartarCarta(cartaEncontrada, baralho)
+
         this.moverSe(cidadeDestino)
-
-        this.cartas = this.cartas.filter(carta => carta !== cartaEncontrada)
-
-        baralho.adicionarDescarte(cartaEncontrada)
     }
 
     vooFretado(cidadeDestino: Cidade, baralho: BaralhoJogo) {
@@ -72,11 +70,9 @@ export class Jogador {
             )
         }
 
+        this.descartarCarta(cartaEncontrada, baralho)
+
         this.moverSe(cidadeDestino)
-
-        this.cartas = this.cartas.filter(carta => carta !== cartaEncontrada)
-
-        baralho.adicionarDescarte(cartaEncontrada)
     }
 
     ponteAerea(cidadeDestino: Cidade) {
@@ -95,14 +91,16 @@ export class Jogador {
         this.moverSe(cidadeDestino)
     }
 
-    tratarDoencas(cor: COR_ENUM, temCura: boolean) {
-        return this.getLocalizacao().tratarDoencas(cor, temCura)
-    }
-
     private moverSe(cidade: Cidade) {
         this.localizacao.removerJogador(this)
         this.localizacao = cidade
         cidade.adicionarJogador(this)
+    }
+
+    private descartarCarta(cartaDescarte: Carta, baralho: Baralho) {
+        this.cartas = this.cartas.filter(carta => carta !== cartaDescarte)
+
+        baralho.adicionarDescarte(cartaDescarte)
     }
 
     getCorDaCidadeAtual() {

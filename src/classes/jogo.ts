@@ -77,10 +77,7 @@ export class Jogo {
     }
 
     tratarDoenca() {
-        this.getTabuleiro().tratarDoenca(
-            this.getJogadorAtual().getCorDaCidadeAtual(),
-            this.getJogadorAtual(),
-        )
+        this.getTabuleiro().tratarDoenca(this.getJogadorAtual())
 
         this.verificarTurno()
     }

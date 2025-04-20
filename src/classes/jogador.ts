@@ -28,9 +28,7 @@ export class Jogador {
     }
 
     balsa(cidade: Cidade) {
-        const eConexao = this.localizacao
-            .getConexoes()
-            .find(conexao => conexao === cidade)
+        const eConexao = this.localizacao.buscarCidadeConectada(cidade)
 
         if (!eConexao) {
             throw new Error(

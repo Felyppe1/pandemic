@@ -1,6 +1,6 @@
 import { COR_ENUM } from './cidade'
 
-export class CuboDoenca {
+export class Doenca {
     private cor: COR_ENUM
     private cubosRestantes: number
     private encontrouCura: boolean

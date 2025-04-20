@@ -2,20 +2,20 @@ import { cidades } from '../dados/cidades'
 import { BaralhoInfeccao, BaralhoJogo } from './baralho'
 import { CartaInfeccao } from './carta'
 import { Cidade, COR_ENUM, NomeCidade } from './cidade'
-import { CuboDoenca } from './cubo-doenca'
+import { Doenca } from './doenca'
 import { DIFICULDADE_ENUM } from './jogo'
 
 export class Tabuleiro {
     private baralhoJogador: BaralhoJogo
     private baralhoInfeccao: BaralhoInfeccao
-    private cubosDoenca: CuboDoenca[]
+    private doencas: Map<COR_ENUM, Doenca>
     private cidades: Cidade[]
 
     constructor(dificuldade: DIFICULDADE_ENUM) {
-        this.cubosDoenca = []
+        this.doencas = new Map()
 
         Object.values(COR_ENUM).forEach(cor => {
-            this.cubosDoenca.push(new CuboDoenca(cor))
+            this.doencas.set(cor, new Doenca(cor))
         })
 
         this.cidades = cidades.map(
@@ -49,7 +49,12 @@ export class Tabuleiro {
 
                 const cidade = this.getCidade(cartaInfeccao.getNome())
 
-                cidade.adicionarCubos(this.getCuboDoenca(cidade.getCor()), j)
+                const doenca = this.getDoenca(cidade.getCor())
+
+                doenca.retirarCubos(j)
+
+                for (let n = 0; n < j; n++)
+                    cidade.adicionarCubo(doenca.getCor())
             }
         }
     }
@@ -62,22 +67,26 @@ export class Tabuleiro {
                 cidade => cidade.getNome() === carta.getNome(),
             )!
 
-            const cuboDoenca = this.cubosDoenca.find(
-                cubo => cubo.getCor() === cidade.getCor(),
-            )!
+            const doenca = this.getDoenca(cidade.getCor())
 
-            cidade.adicionarCubos(cuboDoenca, 1)
+            doenca.retirarCubos(1)
+
+            cidade.adicionarCubo(doenca.getCor())
 
             this.baralhoInfeccao.adicionarDescarte(carta)
         }
+    }
+
+    comprarCartaDoBaralhoJogador() {
+        return this.baralhoJogador.retirarCarta()
     }
 
     getCidade(nome: NomeCidade) {
         return this.cidades.find(cidade => cidade.getNome() === nome)!
     }
 
-    getCuboDoenca(cor: COR_ENUM) {
-        return this.cubosDoenca.find(cuboDoenca => cor === cuboDoenca.getCor())!
+    getDoenca(cor: COR_ENUM) {
+        return this.doencas.get(cor)!
     }
 
     getBaralhoJogador() {

@@ -1,4 +1,3 @@
-import { CuboDoenca } from './cubo-doenca'
 import { Jogador } from './jogador'
 
 export class Cidade {
@@ -25,6 +24,10 @@ export class Cidade {
         }
     }
 
+    buscarCidadeConectada(cidade: Cidade) {
+        return this.conexoes.find(conexao => conexao === cidade)
+    }
+
     getNome() {
         return this.nome
     }
@@ -45,20 +48,18 @@ export class Cidade {
         this.temCentro = true
     }
 
-    adicionarCubos(cuboDoenca: CuboDoenca, quantidade: number) {
-        cuboDoenca.retirarCubos(quantidade)
+    adicionarCubo(cor: COR_ENUM) {
+        const quantidadeAtual = this.cubosDoenca.get(cor)!
 
-        const quantidadeAtual = this.cubosDoenca.get(cuboDoenca.getCor())!
-
-        if (quantidadeAtual + quantidade > 3) {
+        if (quantidadeAtual === 3) {
             this.conexoes.forEach(cidade => {
-                cidade.adicionarCubos(cuboDoenca, 1)
+                cidade.adicionarCubo(cor)
             })
 
             return
         }
 
-        this.cubosDoenca.set(cuboDoenca.getCor(), quantidadeAtual + quantidade)
+        this.cubosDoenca.set(cor, quantidadeAtual + 1)
     }
 
     adicionarJogador(jogador: Jogador) {

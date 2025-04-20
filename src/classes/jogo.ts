@@ -32,7 +32,7 @@ export class Jogo {
 
         this.jogadores = Array.from({ length: qtdJogadores }).map(_ => {
             const cartas = Array.from({ length: numeroCartas }).map(_ =>
-                this.tabuleiro.getBaralhoJogador().retirarCarta(),
+                this.tabuleiro.comprarCartaDoBaralhoJogador(),
             )
 
             return new Jogador(

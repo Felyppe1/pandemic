@@ -38,11 +38,24 @@ export function App() {
         setJogo(jogo)
     }
 
-    console.log(jogo?.getJogadorAtual().getPersonagem().getNome())
-    console.log(jogo?.getJogadorAtual().getLocalizacao().getNome())
-    console.log(jogo?.getTabuleiro().getBaralhoJogador().getDescartes())
-    console.log(jogo?.getTabuleiro().getBaralhoInfeccao().getDescartes())
-    console.log(jogo?.getAcoesRestantes())
+    console.log(
+        'Personagem do jogador atual',
+        jogo?.getJogadorAtual().getPersonagem().getNome(),
+    )
+    console.log(
+        'Nome da localização do jogador atual',
+        jogo?.getJogadorAtual().getLocalizacao().getNome(),
+    )
+    console.log(
+        'Cartas de descarte do baralho do jogador',
+        jogo?.getTabuleiro().getBaralhoJogador().getDescartes(),
+    )
+    console.log(
+        'Cartas de descarte do baralho de infecção',
+        jogo?.getTabuleiro().getBaralhoInfeccao().getDescartes(),
+    )
+    console.log('Ações restantes', jogo?.getAcoesRestantes())
+    console.log('Cartas do jogador atual', jogo?.getJogadorAtual().getCartas())
 
     return (
         <div className="flex flex-col items-center justify-center h-screen w-screen relative">

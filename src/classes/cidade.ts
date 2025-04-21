@@ -86,7 +86,11 @@ export class Cidade {
 
         doenca.adicionarCubos(doencasCuradas)
 
-        doenca.erradicar()
+        try {
+            doenca.erradicar()
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     adicionarJogador(jogador: Jogador) {

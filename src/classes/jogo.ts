@@ -119,6 +119,7 @@ export class Jogo {
     }
 
     tratarDoenca() {
+        // TODO: não dá assim, vai precisar receber a cor por parâmetro (uma cidae pode ter doenças de várias cores)
         const cor = this.getJogadorAtual().getCorDaCidadeAtual()
 
         const doenca = this.getDoenca(cor)

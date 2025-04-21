@@ -68,27 +68,25 @@ export class Cidade {
 
         const quantidadeCubosDoenca = this.cubosDoenca.get(cor)!
 
-        let doencasCuradas: number | undefined
-
         if (quantidadeCubosDoenca === 0) {
             throw new Error(`Não há doenças da cor ${cor} nessa cidade`)
         }
+
+        let doencasCuradas: number
 
         if (doenca.estaCurada()) {
             this.cubosDoenca.set(cor, 0)
 
             doencasCuradas = quantidadeCubosDoenca
+        } else {
+            this.cubosDoenca.set(cor, quantidadeCubosDoenca - 1)
 
-            return
+            doencasCuradas = 1
         }
 
-        this.cubosDoenca.set(cor, quantidadeCubosDoenca - 1)
+        doenca.adicionarCubos(doencasCuradas)
 
-        doenca.adicionarCubos(doencasCuradas ?? 1)
-
-        if (!doenca.temCuboEmAlgumaCidade() && doenca.estaCurada()) {
-            doenca.erradicar()
-        }
+        doenca.erradicar()
     }
 
     adicionarJogador(jogador: Jogador) {

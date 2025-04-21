@@ -60,6 +60,16 @@ export class Doenca {
     }
 
     erradicar() {
+        if (this.temCuboEmAlgumaCidade()) {
+            throw new Error(
+                'Não é possível erradicar doença ainda presente em cidades',
+            )
+        }
+
+        if (this.encontrouCura) {
+            throw new Error('Não é possível erradicar doença sem cura')
+        }
+
         this.estaErradicado = true
     }
 }

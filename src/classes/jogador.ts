@@ -91,7 +91,7 @@ export class Jogador {
         this.moverSe(cidadeDestino)
     }
 
-    private moverSe(cidade: Cidade) {
+    moverSe(cidade: Cidade) {
         this.localizacao.removerJogador(this)
         this.localizacao = cidade
         cidade.adicionarJogador(this)
@@ -105,6 +105,10 @@ export class Jogador {
 
     getCorDaCidadeAtual() {
         return this.localizacao.getCor()
+    }
+
+    ePersonagem(nome: string) {
+        return this.personagem.getNome() === nome
     }
 
     getCartas() {

@@ -107,6 +107,10 @@ export class Cidade {
         return this.temCentro
     }
 
+    temAlgumJogador() {
+        return this.jogadores.length > 0
+    }
+
     getCubosDoenca() {
         return this.cubosDoenca
     }

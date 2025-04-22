@@ -131,6 +131,62 @@ export class Jogo {
         this.verificarTurno()
     }
 
+    moverOutroJogadorParaCidadeComJogador(
+        indiceJogador: number,
+        nomeCidade: NomeCidade,
+    ) {
+        const jogadorASerMovido = this.getJogador(indiceJogador)
+
+        if (!this.getJogadorAtual().ePersonagem('AGENTE DE VIAGENS')) {
+            throw new Error('Apenas o Agente de Viagens pode fazer essa ação')
+        }
+
+        const cidade = this.getCidade(nomeCidade)
+
+        if (!cidade.temAlgumJogador()) {
+            throw new Error('Cidade não tem jogador')
+        }
+
+        jogadorASerMovido.moverSe(cidade)
+
+        this.verificarTurno()
+    }
+
+    moverOutroJogadorComoSeFosseSeu(
+        indiceJogador: number,
+        tipoDeMovimento: 'balsa' | 'voo direto' | 'voo fretado' | 'ponte aerea',
+        nomeCidade: NomeCidade,
+    ) {
+        const jogadorAlvo = this.getJogador(indiceJogador)
+
+        const jogadorAtual = this.getJogadorAtual()
+
+        if (!jogadorAtual.ePersonagem('Agente de Viagens')) {
+            throw new Error('Apenas o Agente de Viagens pode fazer essa ação')
+        }
+
+        const cidadeDestino = this.getCidade(nomeCidade)
+
+        switch (tipoDeMovimento) {
+            case 'balsa':
+                jogadorAlvo.balsa(cidadeDestino)
+                break
+            case 'voo direto':
+                jogadorAlvo.vooDireto(cidadeDestino, this.baralhoJogador)
+                break
+            case 'voo fretado':
+                jogadorAlvo.vooFretado(cidadeDestino, this.baralhoJogador)
+                break
+            case 'ponte aerea':
+                jogadorAlvo.ponteAerea(cidadeDestino)
+                break
+            default:
+                throw new Error('Opção de movimento inválida')
+        }
+
+        this.verificarTurno()
+    }
+
     private verificarTurno() {
         this.acoesRestantes -= 1
 
@@ -162,6 +218,14 @@ export class Jogo {
 
             this.baralhoInfeccao.adicionarDescarte(carta)
         }
+    }
+
+    getJogador(indiceJogador: number) {
+        if (indiceJogador < 0 || indiceJogador >= this.jogadores.length) {
+            throw new Error('Jogador não encontrado')
+        }
+
+        return this.jogadores[indiceJogador]
     }
 
     getDoenca(cor: COR_ENUM) {

@@ -2,6 +2,7 @@ import {
     Carta,
     CartaCidade,
     CartaEpidemia,
+    CartaEvento,
     CartaInfeccao,
     FinanciamentoGovernamental,
     Prognostico,
@@ -46,6 +47,10 @@ export abstract class Baralho {
             const j = Math.floor(Math.random() * (i + 1))
             ;[this.cartas[i], this.cartas[j]] = [this.cartas[j], this.cartas[i]]
         }
+    }
+
+    setDescartes(descartes: Carta[]) {
+        this.descartes = descartes
     }
 
     getCartas() {
@@ -97,6 +102,24 @@ export class BaralhoJogador extends Baralho {
         cartasEpidemia.forEach(carta => this.adicionarCarta(carta))
 
         this.embaralharCartas()
+    }
+
+    retirarDescarteEspecifico(descarte: CartaEvento): CartaEvento {
+        const descarteEncontrado = super
+            .getDescartes()
+            .find(d => d !== descarte)
+
+        if (!descarteEncontrado) {
+            throw new Error('Carta não encontrada no descarte')
+        }
+
+        super.setDescartes(
+            super
+                .getDescartes()
+                .filter(descarte => descarte !== descarteEncontrado),
+        )
+
+        return descarteEncontrado as CartaEvento
     }
 }
 

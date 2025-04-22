@@ -1,7 +1,11 @@
 import { Baralho, BaralhoJogador } from './baralho'
-import { Carta, CartaCidade, CartaJogador } from './carta'
+import { Carta, CartaCidade, CartaEvento, CartaJogador } from './carta'
 import { Cidade, COR_ENUM } from './cidade'
-import { Personagem } from './personagem'
+import {
+    EspecialistaContingencia,
+    NomePersonagem,
+    Personagem,
+} from './personagem'
 
 export class Jogador {
     private cartas: CartaJogador[]
@@ -103,11 +107,23 @@ export class Jogador {
         baralho.adicionarDescarte(cartaDescarte)
     }
 
+    comprarCartaDeFuncao(baralho: BaralhoJogador, cartaEvento: CartaEvento) {
+        if (this.personagem instanceof EspecialistaContingencia) {
+            const carta = baralho.retirarDescarteEspecifico(cartaEvento)
+
+            this.personagem.comprarCartaDeFuncao(carta)
+        } else {
+            throw new Error(
+                'Apenas o Especialista em planos de contingência pode fazer essa ação',
+            )
+        }
+    }
+
     getCorDaCidadeAtual() {
         return this.localizacao.getCor()
     }
 
-    ePersonagem(nome: string) {
+    ePersonagem(nome: NomePersonagem) {
         return this.personagem.getNome() === nome
     }
 

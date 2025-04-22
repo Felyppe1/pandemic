@@ -1,6 +1,6 @@
 import { cidades } from '../dados/cidades'
 import { BaralhoInfeccao, BaralhoJogador } from './baralho'
-import { CartaInfeccao } from './carta'
+import { CartaEvento, CartaInfeccao } from './carta'
 import { Cidade, COR_ENUM, NomeCidade } from './cidade'
 import { Doenca } from './doenca'
 import { Jogador } from './jogador'
@@ -137,7 +137,7 @@ export class Jogo {
     ) {
         const jogadorASerMovido = this.getJogador(indiceJogador)
 
-        if (!this.getJogadorAtual().ePersonagem('AGENTE DE VIAGENS')) {
+        if (!this.getJogadorAtual().ePersonagem('Agente de Viagens')) {
             throw new Error('Apenas o Agente de Viagens pode fazer essa ação')
         }
 
@@ -183,6 +183,14 @@ export class Jogo {
             default:
                 throw new Error('Opção de movimento inválida')
         }
+
+        this.verificarTurno()
+    }
+
+    comprarCartaDeFuncao(cartaEvento: CartaEvento) {
+        const jogadorAtual = this.getJogadorAtual()
+
+        jogadorAtual.comprarCartaDeFuncao(this.baralhoJogador, cartaEvento)
 
         this.verificarTurno()
     }

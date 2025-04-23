@@ -4,24 +4,30 @@ import { JogoIniciado } from './components/JogoIniciado'
 import { Turno } from './components/Turno'
 import { Tabuleiro } from './components/Tabuleiro'
 import { Cidade } from './classes/cidade'
+import { Acao, Cor } from './types'
 
-export type AcaoProps =
-    | 'balsa'
-    | 'voo direto'
-    | 'voo fretado'
-    | 'ponte aerea'
-    | null
+enum COR_ENUM {
+    AMARELO = 'AMARELO',
+    AZUL = 'AZUL',
+    PRETO = 'PRETO',
+    VERMELHO = 'VERMELHO',
+}
 
-export type OutraAcao = 'tratar doenca'
+const mapeamentoCorParaCorEnum = {
+    amarelo: COR_ENUM.AMARELO,
+    azul: COR_ENUM.AZUL,
+    preto: COR_ENUM.PRETO,
+    vermelho: COR_ENUM.VERMELHO,
+}
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
     const [jogo, setJogo] = useState<Jogo | null>(null)
     const [qtdJogadores, setQtdJogadores] = useState(2)
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
-    const [_, setTeste] = useState(0)
+    const [_, setReenderizar] = useState(0)
 
-    const [acao, setAcao] = useState<AcaoProps>(null)
+    const [acao, setAcao] = useState<Acao | null>(null)
 
     function onClickCidade(cidade: Cidade) {
         if (acao === 'voo direto') jogo!.moverJogadorPorVooDireto(cidade)
@@ -32,14 +38,18 @@ export function App() {
         setAcao(null)
     }
 
-    function onClickAcao(acao: AcaoProps) {
+    function handleAcao(acao: Acao) {
         setAcao(state => (state === acao ? null : acao))
     }
 
-    function onClickOutraAcao(acao: OutraAcao) {
-        if (acao === 'tratar doenca') jogo!.tratarDoenca()
+    function handleTratarDoenca(cor?: Cor) {
+        if (cor) {
+            jogo!.tratarDoenca(mapeamentoCorParaCorEnum[cor])
+        } else {
+            jogo!.tratarDoenca()
+        }
 
-        setTeste(state => state + 1)
+        setReenderizar(state => state + 1)
     }
 
     const iniciarJogo = () => {
@@ -68,8 +78,8 @@ export function App() {
                         <Turno
                             jogo={jogo}
                             acaoSelecionada={acao}
-                            onClickOutraAcao={onClickOutraAcao}
-                            onClickAcao={onClickAcao}
+                            onClickAcao={handleAcao}
+                            onClickTratarDoenca={handleTratarDoenca}
                         />
                     ) : (
                         <></>

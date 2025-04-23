@@ -20,3 +20,13 @@ export type Carta = {
     tipo: TipoCarta
     cor?: Cor
 }
+
+export type Acao =
+    | 'balsa'
+    | 'voo direto'
+    | 'voo fretado'
+    | 'ponte aerea'
+    | 'tratar doenca'
+    | 'contruir centro pesquisa'
+    | 'compartilhar conhecimento'
+    | 'descobrir cura'

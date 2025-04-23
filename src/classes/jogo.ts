@@ -4,7 +4,7 @@ import { CartaEpidemia, CartaInfeccao } from './carta'
 import { Cidade, COR_ENUM, NomeCidade } from './cidade'
 import { Doenca } from './doenca'
 import { Jogador } from './jogador'
-import { escolherPersonagemAleatoriamente } from './personagem'
+import { escolherPersonagemAleatoriamente, NomePersonagem } from './personagem'
 
 export enum DIFICULDADE_ENUM {
     FACIL = 'FACIL',
@@ -121,6 +121,7 @@ export class Jogo {
 
     tratarDoenca(cor?: COR_ENUM) {
         const cores = this.getJogadorAtual().getCoresDasDoencasNaCidadeAtual()
+        console.log('COR', cor)
 
         let corATratar: COR_ENUM | undefined
 
@@ -151,7 +152,7 @@ export class Jogo {
         indiceJogador: number,
         nomeCidade: NomeCidade,
     ) {
-        const jogadorASerMovido = this.getJogador(indiceJogador)
+        const jogadorASerMovido = this.getJogadorPeloSeuIndice(indiceJogador)
 
         if (!this.getJogadorAtual().ePersonagem('Agente de Viagens')) {
             throw new Error('Apenas o Agente de Viagens pode fazer essa ação')
@@ -173,7 +174,7 @@ export class Jogo {
         tipoDeMovimento: 'balsa' | 'voo direto' | 'voo fretado' | 'ponte aerea',
         nomeCidade: NomeCidade,
     ) {
-        const jogadorAlvo = this.getJogador(indiceJogador)
+        const jogadorAlvo = this.getJogadorPeloSeuIndice(indiceJogador)
 
         const jogadorAtual = this.getJogadorAtual()
 
@@ -296,12 +297,24 @@ export class Jogo {
     //     this.marcadorSurto += 1
     // }
 
-    getJogador(indiceJogador: number) {
+    getJogadorPeloSeuIndice(indiceJogador: number) {
         if (indiceJogador < 0 || indiceJogador >= this.jogadores.length) {
             throw new Error('Jogador não encontrado')
         }
 
         return this.jogadores[indiceJogador]
+    }
+
+    getJogadorPeloNomePersonagem(nomePersonagem: NomePersonagem) {
+        const jogador = this.jogadores.find(jogador =>
+            jogador.ePersonagem(nomePersonagem),
+        )
+
+        if (!jogador) {
+            throw new Error('Jogador não encontrado')
+        }
+
+        return jogador
     }
 
     getDoenca(cor: COR_ENUM) {

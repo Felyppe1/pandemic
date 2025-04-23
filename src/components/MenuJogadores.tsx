@@ -48,7 +48,7 @@ export const MenuJogadores: React.FC<Props> = ({ jogadores }) => {
                                     className="w-8 h-8 rounded-full mr-2 border border-white"
                                 />
                                 <div className="flex flex-col leading-tight">
-                                    <span className="font-bold text-xs text-white">
+                                    <span className="font-bold text-xs text-white max-w-[9rem]">
                                         {jogador.nome}
                                     </span>
                                     <span className="text-[10px] italic text-white">

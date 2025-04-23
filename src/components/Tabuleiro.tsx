@@ -275,7 +275,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
         <TransformWrapper
             initialScale={1}
             minScale={0.9}
-            maxScale={3}
+            maxScale={4}
             wheel={{ step: 0.1, smoothStep: 0.05 }}
             doubleClick={{ disabled: true }}
         >

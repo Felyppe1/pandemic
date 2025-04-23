@@ -266,7 +266,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
             className="bg-[#001b33]"
         >
             <image
-                href="./src/assets/mapa-pandemic.png"
+                href="/mapa-pandemic.png"
                 x="0"
                 y="0"
                 width="1600"

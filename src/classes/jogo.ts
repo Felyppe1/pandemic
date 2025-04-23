@@ -1,6 +1,6 @@
 import { cidades } from '../dados/cidades'
 import { BaralhoInfeccao, BaralhoJogador } from './baralho'
-import { CartaEpidemia, CartaEvento, CartaInfeccao } from './carta'
+import { CartaEpidemia, CartaInfeccao } from './carta'
 import { Cidade, COR_ENUM, NomeCidade } from './cidade'
 import { Doenca } from './doenca'
 import { Jogador } from './jogador'
@@ -26,12 +26,12 @@ export class Jogo {
     private doencas: Map<COR_ENUM, Doenca>
     private cidades: Cidade[]
     private dificuldade: DIFICULDADE_ENUM
-    private marcadorSurto: number
+    // private marcadorSurto: number
     private indiceJogadorAtual: number
     private acoesRestantes: number
 
     constructor(qtdJogadores: number, dificuldade: DIFICULDADE_ENUM) {
-        this.marcadorSurto = 0
+        // this.marcadorSurto = 0
         this.dificuldade = dificuldade
         this.doencas = new Map()
         this.indiceJogadorAtual = 0
@@ -276,13 +276,13 @@ export class Jogo {
         }
     }
 
-    private avancarMarcadorSurto() {
-        if (this.marcadorSurto === 7) {
-            throw new Error('O surto chegou ao limite')
-        }
+    // private avancarMarcadorSurto() {
+    //     if (this.marcadorSurto === 7) {
+    //         throw new Error('O surto chegou ao limite')
+    //     }
 
-        this.marcadorSurto += 1
-    }
+    //     this.marcadorSurto += 1
+    // }
 
     getJogador(indiceJogador: number) {
         if (indiceJogador < 0 || indiceJogador >= this.jogadores.length) {

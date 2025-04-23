@@ -93,7 +93,7 @@ export function Turno({
                 <div className="absolute bottom-4 left-4 bg-opacity-80 p-4 rounded shadow">
                     <h2 className="font-bold mb-2">Cartas</h2>
                     <div className="flex gap-2">
-                        {jogadorAtual.getCartas().map((carta, index) =>
+                        {jogadorAtual.getCartas().map(carta =>
                             carta instanceof CartaCidade ? (
                                 <div
                                     key={carta.getNome()}

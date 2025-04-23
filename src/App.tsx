@@ -19,7 +19,7 @@ export function App() {
     const [jogo, setJogo] = useState<Jogo | null>(null)
     const [qtdJogadores, setQtdJogadores] = useState(2)
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
-    const [teste, setTeste] = useState(0)
+    const [_, setTeste] = useState(0)
 
     const [acao, setAcao] = useState<AcaoProps>(null)
 

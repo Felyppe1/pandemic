@@ -274,7 +274,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
             />
 
             {/* Conexões */}
-            {coordenadasCidades.map(({ nomeCidade, x, y }, i) => {
+            {coordenadasCidades.map(({ nomeCidade, x, y }) => {
                 const cidade = jogo.getCidade(nomeCidade)
                 const cidadesConectadas = cidade.getConexoes()
 
@@ -308,7 +308,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
             })}
 
             {/* Cidades */}
-            {coordenadasCidades.map((coordCidade, i) => {
+            {coordenadasCidades.map(coordCidade => {
                 const cor =
                     'fill-' +
                     mapeamentoCor[

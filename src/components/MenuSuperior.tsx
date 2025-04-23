@@ -18,7 +18,7 @@ export const MenuSuperior: React.FC<Props> = ({
     surtos,
 }) => {
     return (
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-50 bg-black/80 text-white px-10 py-2 rounded-b-full border-b-1 border-x-1 border-white shadow flex items-center gap-8 font-mono text-sm">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-50 bg-black/80 text-white px-10 py-2 rounded-b-lg border-b-1 border-x-1 border-white shadow flex items-center flex-col gap-1 font-mono text-sm sm:rounded-b-full sm:flex-row sm:gap-8">
             {/* Cartas restantes */}
             <div className="flex items-center gap-1">
                 <span className="text-xs">🃏</span>
@@ -37,22 +37,24 @@ export const MenuSuperior: React.FC<Props> = ({
                 )}
             </div>
 
-            {/* Centros de pesquisa */}
-            <div className="flex items-center gap-1">
-                <CentroPesquisa className="w-4" />
-                <span>{centrosPesquisa}</span>
-            </div>
+            <div className="flex items-center gap-8">
+                {/* Centros de pesquisa */}
+                <div className="flex items-center gap-1">
+                    <CentroPesquisa className="w-4" />
+                    <span>{centrosPesquisa}</span>
+                </div>
 
-            {/* Taxa de infecção */}
-            <div className="flex items-center gap-1">
-                <span className="text-green-300">☣️</span>
-                <span>{velocidadeInfeccao}</span>
-            </div>
+                {/* Taxa de infecção */}
+                <div className="flex items-center gap-1">
+                    <span className="text-green-300">☣️</span>
+                    <span>{velocidadeInfeccao}</span>
+                </div>
 
-            {/* Surtos */}
-            <div className="flex items-center gap-1">
-                <span className="text-red-400">🚨</span>
-                <span>{surtos}</span>
+                {/* Surtos */}
+                <div className="flex items-center gap-1">
+                    <span className="text-red-400">🚨</span>
+                    <span>{surtos}</span>
+                </div>
             </div>
         </div>
     )

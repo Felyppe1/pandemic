@@ -58,11 +58,11 @@ export function App() {
     )
     console.log(
         'Cartas de descarte do baralho do jogador',
-        jogo?.getBaralhoJogador().getDescartes(),
+        jogo?.getBaralhoJogador().toObject(),
     )
     console.log(
         'Cartas de descarte do baralho de infecção',
-        jogo?.getBaralhoInfeccao().getDescartes(),
+        jogo?.getBaralhoInfeccao().toObject(),
     )
     console.log('Ações restantes', jogo?.getAcoesRestantes())
     console.log('Cartas do jogador atual', jogo?.getJogadorAtual().getCartas())

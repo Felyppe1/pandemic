@@ -4,68 +4,51 @@ import {
     CartaEpidemia,
     CartaEvento,
     CartaInfeccao,
+    CartaJogador,
     FinanciamentoGovernamental,
     Prognostico,
     RecursoExtra,
     TransporteAereo,
     UmaNoiteTranquila,
 } from './carta'
-import { Cidade } from './cidade'
+import { Cidade, NomeCidade } from './cidade'
 import { DIFICULDADE_ENUM } from './jogo'
 
+/*
+ * Baralho de infecção interage com descartes:
+ * - Carta de evento Prognóstico: olha as 6 primeiras cartas do descarte de infecção, reordena e as adiciona no topo do baralho
+ * - Carta de epidemia: embaralha as cartas do descarte de infecção e adiciona no topo do baralho de infecção
+ *
+ * Baralho de jogador interage com descartes:
+ * - Personagem Especialista em planos de contingência: escolher uma carta de evento do descarte de jogador e colocar na mão
+ */
 export abstract class Baralho {
-    private cartas: Carta[]
-    private descartes: Carta[]
+    protected cartas: Carta[]
+    protected descartes: Carta[]
 
-    constructor() {
-        this.cartas = []
+    constructor(cartas: Carta[]) {
+        this.cartas = Baralho.embaralhar(cartas)
         this.descartes = []
     }
 
-    adicionarCarta(carta: Carta) {
-        this.cartas.push(carta)
-    }
+    abstract comprarCarta(): Carta
 
-    adicionarDescarte(carta: Carta) {
+    descartar(carta: Carta) {
         this.descartes.push(carta)
     }
 
-    retirarCarta(): Carta {
-        const cartaRetirada = this.cartas.pop()!
-
-        return cartaRetirada
-    }
-
-    retirarDescarte(): Carta {
-        const descarteRetirado = this.descartes.pop()!
-
-        return descarteRetirado
-    }
-
-    embaralharCartas() {
-        for (let i = this.cartas.length - 1; i > 0; i--) {
+    static embaralhar(cartas: Carta[]) {
+        for (let i = cartas.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1))
-            ;[this.cartas[i], this.cartas[j]] = [this.cartas[j], this.cartas[i]]
+            ;[cartas[i], cartas[j]] = [cartas[j], cartas[i]]
         }
-    }
 
-    setDescartes(descartes: Carta[]) {
-        this.descartes = descartes
-    }
-
-    getCartas() {
-        return [...this.cartas]
-    }
-
-    getDescartes() {
-        return this.descartes
+        return cartas
     }
 }
 
 export class BaralhoJogador extends Baralho {
     constructor(cidades: Cidade[]) {
-        super()
-
         const cartasCidade = cidades.map(
             cidade => new CartaCidade(cidade.getNome(), cidade.getCor()),
         )
@@ -78,11 +61,17 @@ export class BaralhoJogador extends Baralho {
             new RecursoExtra(),
         ]
 
-        const cartas = [...cartasCidade, ...cartasEvento]
+        super([...cartasCidade, ...cartasEvento])
+    }
 
-        cartas.forEach(carta => this.adicionarCarta(carta))
+    comprarCarta(): CartaJogador {
+        if (this.cartas.length === 0) {
+            throw new Error('As cartas do baralho do jogador acabaram')
+        }
 
-        this.embaralharCartas()
+        const cartaRetirada = this.cartas.pop()!
+
+        return cartaRetirada
     }
 
     definirDificuldade(dificuldade: DIFICULDADE_ENUM) {
@@ -99,27 +88,57 @@ export class BaralhoJogador extends Baralho {
             () => new CartaEpidemia(),
         )
 
-        cartasEpidemia.forEach(carta => this.adicionarCarta(carta))
+        this.cartas.push(...cartasEpidemia)
 
-        this.embaralharCartas()
+        this.cartas = Baralho.embaralhar(this.cartas)
     }
 
-    retirarDescarteEspecifico(descarte: CartaEvento): CartaEvento {
-        const descarteEncontrado = super
-            .getDescartes()
-            .find(d => d !== descarte)
-
-        if (!descarteEncontrado) {
-            throw new Error('Carta não encontrada no descarte')
-        }
-
-        super.setDescartes(
-            super
-                .getDescartes()
-                .filter(descarte => descarte !== descarteEncontrado),
+    comprarUmaCartaDeFuncao(nomeEvento: string) {
+        const cartaEvento = this.descartes.find(
+            carta =>
+                carta instanceof CartaEvento && carta.getNome() === nomeEvento,
         )
 
-        return descarteEncontrado as CartaEvento
+        if (!cartaEvento) {
+            throw new Error('Carta de evento não encontrada no descarte')
+        }
+
+        this.descartes = this.descartes.filter(
+            descarte => descarte !== cartaEvento,
+        )
+
+        return cartaEvento as CartaEvento
+    }
+
+    toObject() {
+        return {
+            cartas: this.cartas.map(carta => this.mapearCarta(carta)),
+            descartes: this.descartes.map(carta => this.mapearCarta(carta)),
+        }
+    }
+
+    private mapearCarta(carta: Carta) {
+        if (carta instanceof CartaCidade) {
+            return {
+                tipo: 'Carta Cidade',
+                nome: carta.getNome(),
+                cor: carta.getCor(),
+            }
+        }
+
+        if (carta instanceof CartaEpidemia) {
+            return {
+                tipo: 'Carta Epidemia',
+            }
+        }
+
+        if (carta instanceof CartaEvento) {
+            return {
+                tipo: 'Carta Evento',
+                nome: carta.getNome(),
+                descricao: carta.getDescricao(),
+            }
+        }
     }
 }
 
@@ -128,21 +147,104 @@ export class BaralhoInfeccao extends Baralho {
     private indiceVelocidadeInfeccao: number
 
     constructor(cidades: Cidade[]) {
-        super()
-
         const cartasInfeccao = cidades.map(
             cidade => new CartaInfeccao(cidade.getNome(), cidade.getCor()),
         )
 
-        cartasInfeccao.forEach(carta => this.adicionarCarta(carta))
-
-        this.embaralharCartas()
+        super(cartasInfeccao)
 
         this.listaVelocidadeInfeccao = [2, 2, 2, 3, 3, 4, 4]
         this.indiceVelocidadeInfeccao = 0
     }
 
+    comprarCarta(): Carta {
+        const cartaRetirada = this.cartas.pop()!
+
+        return cartaRetirada
+    }
+
+    comprarCartaDoFundo() {
+        return this.cartas[0] as CartaInfeccao
+    }
+
+    reordenarSeisPrimeirasCartasDeDescarteEAdicionarNoBaralho(
+        cartasReordenadas: NomeCidade[],
+    ) {
+        if (cartasReordenadas.length > 6) {
+            throw new Error(
+                'A quantidade de cartas reordenadas não pode ser maior que 6',
+            )
+        }
+
+        const nomeDasCartas = this.descartes.map(descarte => {
+            if (descarte instanceof CartaInfeccao) {
+                return descarte.getNome()
+            }
+        })
+
+        const cartaInfeccaoNaoEncontrada = cartasReordenadas.find(
+            cartaInfeccao => !nomeDasCartas.includes(cartaInfeccao),
+        )
+
+        if (cartaInfeccaoNaoEncontrada) {
+            throw new Error(
+                `A carta de infecção ${cartaInfeccaoNaoEncontrada} não está no descarte`,
+            )
+        }
+
+        const quantidade = cartasReordenadas.length
+        const cartasRemovidas = this.descartes.splice(
+            -quantidade,
+            quantidade,
+        ) as CartaInfeccao[]
+
+        const instanciasReordenadas = cartasReordenadas.map(
+            nome => cartasRemovidas.find(c => c.getNome() === nome)!,
+        )
+
+        this.cartas.push(...instanciasReordenadas)
+    }
+
+    intensificar() {
+        Baralho.embaralhar(this.descartes)
+
+        this.cartas.push(...this.descartes)
+    }
+
+    aumentarVelocidadeInfeccao() {
+        if (
+            this.indiceVelocidadeInfeccao ===
+            this.listaVelocidadeInfeccao.length - 1
+        )
+            return
+
+        this.indiceVelocidadeInfeccao += 1
+    }
+
     getVelocidadeInfeccao() {
         return this.listaVelocidadeInfeccao[this.indiceVelocidadeInfeccao]
+    }
+
+    toObject() {
+        return {
+            cartas: this.cartas.map(carta => {
+                if (carta instanceof CartaInfeccao) {
+                    return {
+                        tipo: 'Carta Infecção',
+                        nome: carta.getNome(),
+                        cor: carta.getCor(),
+                    }
+                }
+            }),
+            descartes: this.descartes.map(carta => {
+                if (carta instanceof CartaInfeccao) {
+                    return {
+                        tipo: 'Carta Infecção',
+                        nome: carta.getNome(),
+                        cor: carta.getCor(),
+                    }
+                }
+            }),
+        }
     }
 }

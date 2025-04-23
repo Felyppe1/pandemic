@@ -1,6 +1,6 @@
-import { Baralho, BaralhoJogador } from './baralho'
+import { Baralho, BaralhoInfeccao, BaralhoJogador } from './baralho'
 import { Carta, CartaCidade, CartaEvento, CartaJogador } from './carta'
-import { Cidade, COR_ENUM } from './cidade'
+import { Cidade, NomeCidade } from './cidade'
 import {
     EspecialistaContingencia,
     NomePersonagem,
@@ -20,15 +20,12 @@ export class Jogador {
         localizacao.adicionarJogador(this)
     }
 
-    comprarCartas(baralho: BaralhoJogador) {
+    comprarCarta(carta: CartaJogador) {
         if (this.cartas.length === 7) {
             throw new Error('Jogador já tem 7 cartas')
         }
 
-        const carta1 = baralho.retirarCarta()
-        const carta2 = baralho.retirarCarta()
-
-        this.cartas.push(carta1!, carta2!)
+        this.cartas.push(carta)
     }
 
     balsa(cidadeDestino: Cidade) {
@@ -104,12 +101,12 @@ export class Jogador {
     private descartarCarta(cartaDescarte: Carta, baralho: Baralho) {
         this.cartas = this.cartas.filter(carta => carta !== cartaDescarte)
 
-        baralho.adicionarDescarte(cartaDescarte)
+        baralho.descartar(cartaDescarte)
     }
 
-    comprarCartaDeFuncao(baralho: BaralhoJogador, cartaEvento: CartaEvento) {
+    comprarCartaDeFuncao(baralho: BaralhoJogador, nomeEvento: string) {
         if (this.personagem instanceof EspecialistaContingencia) {
-            const carta = baralho.retirarDescarteEspecifico(cartaEvento)
+            const carta = baralho.comprarUmaCartaDeFuncao(nomeEvento)
 
             this.personagem.comprarCartaDeFuncao(carta)
         } else {
@@ -117,6 +114,28 @@ export class Jogador {
                 'Apenas o Especialista em planos de contingência pode fazer essa ação',
             )
         }
+    }
+
+    usarEventoPrognostico(
+        cartasInfeccaoReordenadas: NomeCidade[],
+        baralhoInfeccao: BaralhoInfeccao,
+        baralhoJogador: BaralhoJogador,
+    ) {
+        const eventoPrognostico = this.cartas.find(
+            carta =>
+                carta instanceof CartaEvento &&
+                carta.getNome() === 'Prognóstico',
+        )
+
+        if (!eventoPrognostico) {
+            throw new Error('Você não tem a carta de evento Prognóstico')
+        }
+
+        baralhoInfeccao.reordenarSeisPrimeirasCartasDeDescarteEAdicionarNoBaralho(
+            cartasInfeccaoReordenadas,
+        )
+
+        this.descartarCarta(eventoPrognostico, baralhoJogador)
     }
 
     getCorDaCidadeAtual() {

@@ -1,6 +1,6 @@
 import { cidades } from '../dados/cidades'
 import { BaralhoInfeccao, BaralhoJogador } from './baralho'
-import { CartaEvento, CartaInfeccao } from './carta'
+import { CartaEpidemia, CartaEvento, CartaInfeccao } from './carta'
 import { Cidade, COR_ENUM, NomeCidade } from './cidade'
 import { Doenca } from './doenca'
 import { Jogador } from './jogador'
@@ -26,10 +26,12 @@ export class Jogo {
     private doencas: Map<COR_ENUM, Doenca>
     private cidades: Cidade[]
     private dificuldade: DIFICULDADE_ENUM
+    private marcadorSurto: number
     private indiceJogadorAtual: number
     private acoesRestantes: number
 
     constructor(qtdJogadores: number, dificuldade: DIFICULDADE_ENUM) {
+        this.marcadorSurto = 0
         this.dificuldade = dificuldade
         this.doencas = new Map()
         this.indiceJogadorAtual = 0
@@ -59,7 +61,7 @@ export class Jogo {
 
         this.jogadores = Array.from({ length: qtdJogadores }).map(_ => {
             const cartas = Array.from({ length: numeroCartas }).map(_ =>
-                this.baralhoJogador.retirarCarta(),
+                this.baralhoJogador.comprarCarta(),
             )
 
             return new Jogador(
@@ -77,10 +79,10 @@ export class Jogo {
 
         this.baralhoInfeccao = new BaralhoInfeccao(this.cidades)
 
-        for (let i = 0; i < 3; i++) {
-            for (let j = 3; j > 0; j--) {
+        for (let i = 3; i > 0; i--) {
+            for (let j = 0; j < 3; j++) {
                 const cartaInfeccao =
-                    this.baralhoInfeccao.retirarCarta() as CartaInfeccao
+                    this.baralhoInfeccao.comprarCarta() as CartaInfeccao
 
                 const cidade = this.getCidade(cartaInfeccao.getNome())
 
@@ -88,8 +90,10 @@ export class Jogo {
 
                 doenca.retirarCubos(j)
 
-                for (let n = 0; n < j; n++)
+                for (let n = 0; n < i; n++)
                     cidade.adicionarCubo(doenca.getCor())
+
+                this.baralhoInfeccao.descartar(cartaInfeccao)
             }
         }
     }
@@ -119,7 +123,7 @@ export class Jogo {
     }
 
     tratarDoenca() {
-        // TODO: não dá assim, vai precisar receber a cor por parâmetro (uma cidae pode ter doenças de várias cores)
+        // TODO: não dá assim, vai precisar receber a cor por parâmetro (uma cidade pode ter doenças de várias cores)
         const cor = this.getJogadorAtual().getCorDaCidadeAtual()
 
         const doenca = this.getDoenca(cor)
@@ -187,10 +191,22 @@ export class Jogo {
         this.verificarTurno()
     }
 
-    comprarCartaDeFuncao(cartaEvento: CartaEvento) {
+    comprarCartaDeFuncao(nomeEvento: string) {
         const jogadorAtual = this.getJogadorAtual()
 
-        jogadorAtual.comprarCartaDeFuncao(this.baralhoJogador, cartaEvento)
+        jogadorAtual.comprarCartaDeFuncao(this.baralhoJogador, nomeEvento)
+
+        this.verificarTurno()
+    }
+
+    usarEventoPrognostico(cartasInfeccaoReordenadas: NomeCidade[]) {
+        const jogadorAtual = this.getJogadorAtual()
+
+        jogadorAtual.usarEventoPrognostico(
+            cartasInfeccaoReordenadas,
+            this.baralhoInfeccao,
+            this.baralhoJogador,
+        )
 
         this.verificarTurno()
     }
@@ -199,7 +215,7 @@ export class Jogo {
         this.acoesRestantes -= 1
 
         if (this.acoesRestantes === 0) {
-            this.getJogadorAtual().comprarCartas(this.baralhoJogador)
+            this.comprarDuasCartasAoFinalDoTurno()
 
             this.infectarCidadesAoFinalDoTurno()
 
@@ -210,9 +226,41 @@ export class Jogo {
         }
     }
 
+    private comprarDuasCartasAoFinalDoTurno() {
+        const cartas = [
+            this.baralhoJogador.comprarCarta(),
+            this.baralhoJogador.comprarCarta(),
+        ]
+
+        cartas.forEach(carta => {
+            if (carta instanceof CartaEpidemia) {
+                const cartaInfeccao = this.baralhoInfeccao.comprarCartaDoFundo()
+
+                const cidade = this.getCidade(cartaInfeccao.getNome())
+
+                const doenca = this.getDoenca(cartaInfeccao.getCor())
+
+                doenca.retirarCubos(3)
+
+                for (let j = 0; j < 3; j++)
+                    cidade.adicionarCubo(cartaInfeccao.getCor())
+
+                this.baralhoInfeccao.aumentarVelocidadeInfeccao()
+
+                this.baralhoInfeccao.descartar(cartaInfeccao)
+
+                this.baralhoInfeccao.intensificar()
+
+                this.baralhoJogador.descartar(carta)
+            }
+
+            this.getJogadorAtual().comprarCarta(carta)
+        })
+    }
+
     private infectarCidadesAoFinalDoTurno() {
         for (let i = 0; i < this.baralhoInfeccao.getVelocidadeInfeccao(); i++) {
-            const carta = this.baralhoInfeccao.retirarCarta() as CartaInfeccao
+            const carta = this.baralhoInfeccao.comprarCarta() as CartaInfeccao
 
             const cidade = this.cidades.find(
                 cidade => cidade.getNome() === carta.getNome(),
@@ -224,8 +272,16 @@ export class Jogo {
 
             cidade.adicionarCubo(doenca.getCor())
 
-            this.baralhoInfeccao.adicionarDescarte(carta)
+            this.baralhoInfeccao.descartar(carta)
         }
+    }
+
+    private avancarMarcadorSurto() {
+        if (this.marcadorSurto === 7) {
+            throw new Error('O surto chegou ao limite')
+        }
+
+        this.marcadorSurto += 1
     }
 
     getJogador(indiceJogador: number) {

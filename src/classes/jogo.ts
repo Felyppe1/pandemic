@@ -88,7 +88,7 @@ export class Jogo {
 
                 const doenca = this.getDoenca(cidade.getCor())
 
-                doenca.retirarCubos(j)
+                doenca.retirarCubos(i)
 
                 for (let n = 0; n < i; n++)
                     cidade.adicionarCubo(doenca.getCor())
@@ -122,9 +122,8 @@ export class Jogo {
         this.verificarTurno()
     }
 
-    tratarDoenca() {
-        // TODO: não dá assim, vai precisar receber a cor por parâmetro (uma cidade pode ter doenças de várias cores)
-        const cor = this.getJogadorAtual().getCorDaCidadeAtual()
+    tratarDoenca(cor?: COR_ENUM) {
+        cor = cor ?? this.getJogadorAtual().getCorDaCidadeAtual()
 
         const doenca = this.getDoenca(cor)
 

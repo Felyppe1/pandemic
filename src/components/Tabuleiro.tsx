@@ -258,6 +258,8 @@ interface TabuleiroProps {
 export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
     const linhasRenderizadas = new Set<string>()
 
+    let nivelCubos = 0
+
     return (
         <svg
             width="100%"
@@ -365,17 +367,24 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
 
                         {/* Cubos na cidade */}
                         {Array.from(cidade.getCubosDoenca().entries()).flatMap(
-                            ([cor, quantidade]) =>
-                                Array.from({ length: quantidade }).map(
-                                    (_, i) => (
-                                        <CuboDoenca
-                                            key={`${cor}-${i}`}
-                                            x={coordCidade.x - i * 10}
-                                            y={coordCidade.y + 4}
-                                            cor={mapeamentoCor[cor]}
-                                        />
-                                    ),
-                                ),
+                            ([cor, quantidade], indiceCor) => {
+                                if (quantidade !== 0) nivelCubos++
+
+                                const cubos = Array.from({
+                                    length: quantidade,
+                                }).map((_, i) => (
+                                    <CuboDoenca
+                                        key={`${cor}-${i}`}
+                                        x={coordCidade.x - i * 10}
+                                        y={coordCidade.y - 2 + nivelCubos * 6}
+                                        cor={mapeamentoCor[cor]}
+                                    />
+                                ))
+
+                                if (indiceCor === 3) nivelCubos = 0
+
+                                return cubos
+                            },
                         )}
                     </g>
                 )

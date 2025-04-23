@@ -47,32 +47,9 @@ export function App() {
         setJogo(jogo)
     }
 
-    console.clear()
     console.log(
-        'Personagem do jogador atual',
-        jogo?.getJogadorAtual().getPersonagem().getNome(),
-    )
-    console.log(
-        'Nome da localização do jogador atual',
-        jogo?.getJogadorAtual().getLocalizacao().getNome(),
-    )
-    console.log(
-        'Cartas de descarte do baralho do jogador',
-        jogo?.getBaralhoJogador().toObject(),
-    )
-    console.log(
-        'Cartas de descarte do baralho de infecção',
-        jogo?.getBaralhoInfeccao().toObject(),
-    )
-    console.log('Ações restantes', jogo?.getAcoesRestantes())
-    console.log('Cartas do jogador atual', jogo?.getJogadorAtual().getCartas())
-    console.log(
-        'Quantidade de doencas',
-        jogo
-            ?.getDoencas()
-            .forEach(doenca =>
-                console.log(doenca.getCor(), doenca.getCubosRestantes()),
-            ),
+        'DOENCAS NA CIDADE ATUAL',
+        jogo?.getJogadorAtual().getLocalizacao().getCubosDoenca(),
     )
 
     return (

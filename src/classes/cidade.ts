@@ -49,18 +49,27 @@ export class Cidade {
         this.temCentro = true
     }
 
-    adicionarCubo(cor: COR_ENUM) {
-        const quantidadeAtual = this.cubosDoenca.get(cor)!
+    adicionarCubo(
+        doenca: Doenca,
+        cidadesQueJaSofreramSurto = new Set<Cidade>(),
+    ) {
+        const quantidadeAtual = this.cubosDoenca.get(doenca.getCor())!
 
         if (quantidadeAtual === 3) {
+            if (cidadesQueJaSofreramSurto.has(this)) return
+
+            cidadesQueJaSofreramSurto.add(this)
+
             this.conexoes.forEach(cidade => {
-                cidade.adicionarCubo(cor)
+                cidade.adicionarCubo(doenca, cidadesQueJaSofreramSurto)
             })
 
             return
         }
 
-        this.cubosDoenca.set(cor, quantidadeAtual + 1)
+        doenca.retirarCubos(1)
+
+        this.cubosDoenca.set(doenca.getCor(), quantidadeAtual + 1)
     }
 
     tratarDoencas(doenca: Doenca) {
@@ -91,6 +100,18 @@ export class Cidade {
         } catch (e) {
             console.error(e)
         }
+    }
+
+    getCoresDasDoencasPresentes() {
+        const coresDoencas = Array.from(this.cubosDoenca.entries())
+            .filter(([_, quantidade]) => quantidade > 0)
+            .map(([cor, _]) => cor)
+
+        if (coresDoencas.length === 0) {
+            throw new Error('Não há doenças nessa cidade')
+        }
+
+        return coresDoencas
     }
 
     adicionarJogador(jogador: Jogador) {

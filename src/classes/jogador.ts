@@ -138,6 +138,10 @@ export class Jogador {
         this.descartarCarta(eventoPrognostico, baralhoJogador)
     }
 
+    getCoresDasDoencasNaCidadeAtual() {
+        return this.localizacao.getCoresDasDoencasPresentes()
+    }
+
     getCorDaCidadeAtual() {
         return this.localizacao.getCor()
     }

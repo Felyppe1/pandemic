@@ -88,10 +88,7 @@ export class Jogo {
 
                 const doenca = this.getDoenca(cidade.getCor())
 
-                doenca.retirarCubos(i)
-
-                for (let n = 0; n < i; n++)
-                    cidade.adicionarCubo(doenca.getCor())
+                for (let n = 0; n < i; n++) cidade.adicionarCubo(doenca)
 
                 this.baralhoInfeccao.descartar(cartaInfeccao)
             }
@@ -123,9 +120,25 @@ export class Jogo {
     }
 
     tratarDoenca(cor?: COR_ENUM) {
-        cor = cor ?? this.getJogadorAtual().getCorDaCidadeAtual()
+        const cores = this.getJogadorAtual().getCoresDasDoencasNaCidadeAtual()
 
-        const doenca = this.getDoenca(cor)
+        let corATratar: COR_ENUM | undefined
+
+        if (cor) {
+            corATratar = cores.find(c => c === cor)
+
+            if (!corATratar) {
+                throw new Error('Cor não encontrada na cidade atual')
+            }
+        } else {
+            if (cores.length > 1) {
+                throw new Error('É preciso escolher uma cor para tratar')
+            }
+
+            corATratar = cores[0]
+        }
+
+        const doenca = this.getDoenca(corATratar)
 
         const cidade = this.getJogadorAtual().getLocalizacao()
 
@@ -239,10 +252,7 @@ export class Jogo {
 
                 const doenca = this.getDoenca(cartaInfeccao.getCor())
 
-                doenca.retirarCubos(3)
-
-                for (let j = 0; j < 3; j++)
-                    cidade.adicionarCubo(cartaInfeccao.getCor())
+                for (let j = 0; j < 3; j++) cidade.adicionarCubo(doenca)
 
                 this.baralhoInfeccao.aumentarVelocidadeInfeccao()
 
@@ -253,7 +263,14 @@ export class Jogo {
                 this.baralhoJogador.descartar(carta)
             }
 
-            this.getJogadorAtual().comprarCarta(carta)
+            try {
+                this.getJogadorAtual().comprarCarta(carta)
+            } catch (error) {
+                // TODO: adicionar carta para ele escolher em uma lista
+                if (error instanceof Error) {
+                    console.error(error.message)
+                }
+            }
         })
     }
 
@@ -261,15 +278,11 @@ export class Jogo {
         for (let i = 0; i < this.baralhoInfeccao.getVelocidadeInfeccao(); i++) {
             const carta = this.baralhoInfeccao.comprarCarta() as CartaInfeccao
 
-            const cidade = this.cidades.find(
-                cidade => cidade.getNome() === carta.getNome(),
-            )!
+            const cidade = this.getCidade(carta.getNome())
 
             const doenca = this.getDoenca(cidade.getCor())
 
-            doenca.retirarCubos(1)
-
-            cidade.adicionarCubo(doenca.getCor())
+            cidade.adicionarCubo(doenca)
 
             this.baralhoInfeccao.descartar(carta)
         }

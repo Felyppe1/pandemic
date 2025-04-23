@@ -26,12 +26,12 @@ export class Jogo {
     private doencas: Map<COR_ENUM, Doenca>
     private cidades: Cidade[]
     private dificuldade: DIFICULDADE_ENUM
-    // private marcadorSurto: number
+    private marcadorSurto: number
     private indiceJogadorAtual: number
     private acoesRestantes: number
 
     constructor(qtdJogadores: number, dificuldade: DIFICULDADE_ENUM) {
-        // this.marcadorSurto = 0
+        this.marcadorSurto = 0
         this.dificuldade = dificuldade
         this.doencas = new Map()
         this.indiceJogadorAtual = 0
@@ -310,6 +310,10 @@ export class Jogo {
 
     getCidade(nome: NomeCidade) {
         return this.cidades.find(cidade => cidade.getNome() === nome)!
+    }
+
+    getMarcadorSurto() {
+        return this.marcadorSurto
     }
 
     getJogadores() {

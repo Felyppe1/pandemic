@@ -1,7 +1,10 @@
 import { Cidade, COR_ENUM, NomeCidade } from '../classes/cidade'
 import { Jogo } from '../classes/jogo'
+import { Personagem } from '../types'
+import { CentroPesquisa } from './CentroPesquisa'
 import { CuboDoenca } from './CuboDoenca'
 import { Peao } from './Peao'
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
 const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     {
@@ -241,14 +244,22 @@ const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     },
 ]
 
+const mapeamentoCorPersonagens: Record<Personagem, string> = {
+    'Agente de Viagens': '#d187f5',
+    Médico: '#f9943b',
+    Cientista: '#adadad',
+    Pesquisadora: '#c5b08c',
+    'Especialista em Operações': '#7cc66c',
+    'Especialista em Quarentena': '#006400',
+    'Especialista em Planos de Contingência': '#4fbfff',
+}
+
 const mapeamentoCor = {
     [COR_ENUM.AMARELO]: '#fdc700',
     [COR_ENUM.AZUL]: '#155dfc',
     [COR_ENUM.PRETO]: '#262626',
     [COR_ENUM.VERMELHO]: '#c70036',
 }
-
-const corJogadores = ['#00b40f', '#eb7700', '#00e3e0', '#ff00fe']
 
 interface TabuleiroProps {
     jogo: Jogo
@@ -261,134 +272,159 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
     let nivelCubos = 0
 
     return (
-        <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 1600 900"
-            className="bg-[#001b33]"
+        <TransformWrapper
+            initialScale={1}
+            minScale={0.9}
+            maxScale={3}
+            wheel={{ step: 0.1, smoothStep: 0.05 }}
+            doubleClick={{ disabled: true }}
         >
-            <image
-                href="/mapa-pandemic.png"
-                x="0"
-                y="0"
-                width="1600"
-                height="900"
-            />
+            <TransformComponent
+                wrapperStyle={{ width: '100%', height: '100%' }}
+                contentStyle={{ width: '100%', height: '100%' }}
+            >
+                <svg width="100%" height="100%" viewBox="0 0 1600 900">
+                    <image
+                        href="/mapa-pandemic.png"
+                        x="0"
+                        y="0"
+                        width="1600"
+                        height="900"
+                    />
 
-            {/* Conexões */}
-            {coordenadasCidades.map(({ nomeCidade, x, y }) => {
-                const cidade = jogo.getCidade(nomeCidade)
-                const cidadesConectadas = cidade.getConexoes()
+                    {/* Conexões */}
+                    {coordenadasCidades.map(({ nomeCidade, x, y }) => {
+                        const cidade = jogo.getCidade(nomeCidade)
+                        const cidadesConectadas = cidade.getConexoes()
 
-                return cidadesConectadas.map(cidade => {
-                    const nomeA = nomeCidade
-                    const nomeB = cidade.getNome()
+                        return cidadesConectadas.map(cidade => {
+                            const nomeA = nomeCidade
+                            const nomeB = cidade.getNome()
 
-                    const chave = [nomeA, nomeB].sort().join('-')
+                            const chave = [nomeA, nomeB].sort().join('-')
 
-                    if (linhasRenderizadas.has(chave)) return null
+                            if (linhasRenderizadas.has(chave)) return null
 
-                    linhasRenderizadas.add(chave)
+                            linhasRenderizadas.add(chave)
 
-                    const cidadeConectada = coordenadasCidades.find(
-                        elemento => elemento.nomeCidade === cidade.getNome(),
-                    )
-
-                    return cidadeConectada ? (
-                        <line
-                            className="drop-shadow-[0_0_6px_rgba(103,235,255,1)]"
-                            key={cidade.getNome()}
-                            x1={x}
-                            y1={y}
-                            x2={cidadeConectada.x}
-                            y2={cidadeConectada.y}
-                            stroke="rgb(103 234 255)"
-                            strokeWidth="1"
-                        />
-                    ) : null
-                })
-            })}
-
-            {/* Cidades */}
-            {coordenadasCidades.map(coordCidade => {
-                const cor =
-                    'fill-' +
-                    mapeamentoCor[
-                        jogo.getCidade(coordCidade.nomeCidade).getCor()
-                    ]
-
-                const cidade = jogo.getCidade(coordCidade.nomeCidade)
-
-                return (
-                    <g
-                        key={coordCidade.nomeCidade}
-                        onClick={() => onClickCidade(cidade)}
-                        cursor="pointer"
-                    >
-                        <circle
-                            className={`drop-shadow-[0_0_6px_rgba(255,255,255,1)] ${cor}`}
-                            cx={coordCidade.x}
-                            cy={coordCidade.y}
-                            r="10"
-                            fill={mapeamentoCor[cidade.getCor()]}
-                            strokeWidth="2"
-                        />
-                        <text
-                            x={coordCidade.x + 15}
-                            y={coordCidade.y + 5}
-                            fontSize="14"
-                            fill="#ffffff"
-                            fontFamily="sans-serif"
-                        >
-                            {coordCidade.nomeCidade}
-                        </text>
-
-                        {/* Jogadores na cidade */}
-                        {cidade.getJogadores().map((jogador, idx) => {
-                            const total = cidade.getJogadores().length
-                            const spacing = 10
-                            const offset = ((total + 1.5) * spacing) / 2
-                            const x = coordCidade.x - offset + idx * spacing
-
-                            const indice = jogo
-                                .getJogadores()
-                                .findIndex(j => j === jogador)
-
-                            return (
-                                <Peao
-                                    key={idx}
-                                    x={x}
-                                    y={coordCidade.y - 40}
-                                    scale={0.8}
-                                    cor={corJogadores[indice]}
-                                />
+                            const cidadeConectada = coordenadasCidades.find(
+                                elemento =>
+                                    elemento.nomeCidade === cidade.getNome(),
                             )
-                        })}
 
-                        {/* Cubos na cidade */}
-                        {Array.from(cidade.getCubosDoenca().entries()).flatMap(
-                            ([cor, quantidade], indiceCor) => {
-                                if (quantidade !== 0) nivelCubos++
+                            return cidadeConectada ? (
+                                <line
+                                    className="drop-shadow-[0_0_6px_rgba(103,235,255,1)]"
+                                    key={cidade.getNome()}
+                                    x1={x}
+                                    y1={y}
+                                    x2={cidadeConectada.x}
+                                    y2={cidadeConectada.y}
+                                    stroke="rgb(103 234 255)"
+                                    strokeWidth="1"
+                                />
+                            ) : null
+                        })
+                    })}
 
-                                const cubos = Array.from({
-                                    length: quantidade,
-                                }).map((_, i) => (
-                                    <CuboDoenca
-                                        key={`${cor}-${i}`}
-                                        x={coordCidade.x - i * 10}
-                                        y={coordCidade.y - 2 + nivelCubos * 6}
-                                        cor={mapeamentoCor[cor]}
+                    {/* Cidades */}
+                    {coordenadasCidades.map(coordCidade => {
+                        const cor =
+                            'fill-' +
+                            mapeamentoCor[
+                                jogo.getCidade(coordCidade.nomeCidade).getCor()
+                            ]
+
+                        const cidade = jogo.getCidade(coordCidade.nomeCidade)
+
+                        return (
+                            <g
+                                key={coordCidade.nomeCidade}
+                                onClick={() => onClickCidade(cidade)}
+                                cursor="pointer"
+                            >
+                                <circle
+                                    className={`drop-shadow-[0_0_6px_rgba(255,255,255,1)] ${cor}`}
+                                    cx={coordCidade.x}
+                                    cy={coordCidade.y}
+                                    r="10"
+                                    fill={mapeamentoCor[cidade.getCor()]}
+                                    strokeWidth="2"
+                                />
+                                <text
+                                    x={coordCidade.x + 15}
+                                    y={coordCidade.y + 5}
+                                    fontSize="14"
+                                    fill="#ffffff"
+                                    fontFamily="sans-serif"
+                                >
+                                    {coordCidade.nomeCidade}
+                                </text>
+
+                                {/* Jogadores na cidade */}
+                                {cidade.getJogadores().map((jogador, idx) => {
+                                    const total = cidade.getJogadores().length
+                                    const spacing = 10
+                                    const offset = ((total + 1.5) * spacing) / 2
+                                    const x =
+                                        coordCidade.x - offset + idx * spacing
+
+                                    return (
+                                        <Peao
+                                            key={idx}
+                                            x={x}
+                                            y={coordCidade.y - 40}
+                                            scale={0.8}
+                                            cor={
+                                                mapeamentoCorPersonagens[
+                                                    jogador
+                                                        .getPersonagem()
+                                                        .getNome()
+                                                ]
+                                            }
+                                        />
+                                    )
+                                })}
+
+                                {/* Centro de pesquisa */}
+                                {cidade.temCentroPesquisa() && (
+                                    <CentroPesquisa
+                                        x={coordCidade.x - 12}
+                                        y={coordCidade.y - 12}
+                                        scale={0.1}
                                     />
-                                ))
+                                )}
 
-                                if (indiceCor === 3) nivelCubos = 0
+                                {/* Cubos na cidade */}
+                                {Array.from(
+                                    cidade.getCubosDoenca().entries(),
+                                ).flatMap(([cor, quantidade], indiceCor) => {
+                                    if (quantidade !== 0) nivelCubos++
 
-                                return cubos
-                            },
-                        )}
-                    </g>
-                )
-            })}
-        </svg>
+                                    const cubos = Array.from({
+                                        length: quantidade,
+                                    }).map((_, i) => (
+                                        <CuboDoenca
+                                            key={`${cor}-${i}`}
+                                            x={coordCidade.x - i * 10}
+                                            y={
+                                                coordCidade.y -
+                                                2 +
+                                                nivelCubos * 6
+                                            }
+                                            cor={mapeamentoCor[cor]}
+                                        />
+                                    ))
+
+                                    if (indiceCor === 3) nivelCubos = 0
+
+                                    return cubos
+                                })}
+                            </g>
+                        )
+                    })}
+                </svg>
+            </TransformComponent>
+        </TransformWrapper>
     )
 }

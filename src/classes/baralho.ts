@@ -245,6 +245,8 @@ export class BaralhoInfeccao extends Baralho {
                     }
                 }
             }),
+            listaVelocidadeInfeccao: this.listaVelocidadeInfeccao,
+            indiceVelocidadeInfeccao: this.indiceVelocidadeInfeccao,
         }
     }
 }

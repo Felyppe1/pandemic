@@ -53,7 +53,9 @@ export function App() {
     )
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen w-screen relative">
+        <div
+            className={`flex flex-col items-center justify-center h-screen w-screen relative ${jogo ? 'bg-[#001b33]' : 'bg-stone-950'}`}
+        >
             {jogo ? (
                 <>
                     <Tabuleiro jogo={jogo} onClickCidade={onClickCidade} />
@@ -74,18 +76,18 @@ export function App() {
                     )}
                 </>
             ) : (
-                <div className="p-6 shadow-md rounded">
-                    <h1 className="text-xl font-bold mb-4">Configurar Jogo</h1>
+                <div className="p-6 shadow-md rounded text-white sans-serif">
+                    <h1 className="text-xl font-bold mb-4">Novo Jogo</h1>
                     <label className="block mb-2">
                         Quantidade de jogadores:
                     </label>
                     <input
                         type="number"
-                        min="1"
+                        min="2"
                         max="4"
                         value={qtdJogadores}
                         onChange={e => setQtdJogadores(Number(e.target.value))}
-                        className="border p-2 w-full mb-4"
+                        className="p-2 w-full mb-4 bg-[#01102F] border-3 border-[#858387]"
                     />
 
                     <label className="block mb-2">Dificuldade:</label>
@@ -94,7 +96,7 @@ export function App() {
                         onChange={e =>
                             setDificuldade(e.target.value as DIFICULDADE_ENUM)
                         }
-                        className="border p-2 w-full mb-4"
+                        className="p-2 w-full mb-4 bg-[#01102F] border-3 border-[#858387] cursor-pointer"
                     >
                         {Object.values(DIFICULDADE_ENUM).map(nivel => (
                             <option key={nivel} value={nivel}>
@@ -105,10 +107,16 @@ export function App() {
 
                     <button
                         onClick={iniciarJogo}
+                        className="px-6 py-2 bg-[#001435] text-white border-2 border-[#5DA1EE] rounded-md hover:bg-[#00264d] transition"
+                    >
+                        Iniciar Jogo
+                    </button>
+                    {/* <button
+                        onClick={iniciarJogo}
                         className="bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         Jogar
-                    </button>
+                    </button> */}
                 </div>
             )}
         </div>

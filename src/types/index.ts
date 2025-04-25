@@ -30,3 +30,10 @@ export type Acao =
     | 'contruir centro pesquisa'
     | 'compartilhar conhecimento'
     | 'descobrir cura'
+
+export enum COR_ENUM {
+    AMARELO = 'AMARELO',
+    AZUL = 'AZUL',
+    PRETO = 'PRETO',
+    VERMELHO = 'VERMELHO',
+}

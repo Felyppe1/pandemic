@@ -1,5 +1,12 @@
 import { COR_ENUM } from './cidade'
 
+export interface DoencaToObject {
+    cor: COR_ENUM
+    cubosRestantes: number
+    encontrouCura: boolean
+    estaErradicado: boolean
+}
+
 const MAXIMO_CUBOS = 24
 
 export class Doenca {
@@ -43,10 +50,6 @@ export class Doenca {
         return this.cubosRestantes !== MAXIMO_CUBOS
     }
 
-    getCubosRestantes() {
-        return this.cubosRestantes
-    }
-
     estaCurada() {
         return this.encontrouCura
     }
@@ -71,5 +74,14 @@ export class Doenca {
         }
 
         this.estaErradicado = true
+    }
+
+    toObject(): DoencaToObject {
+        return {
+            cor: this.cor,
+            cubosRestantes: this.cubosRestantes,
+            encontrouCura: this.encontrouCura,
+            estaErradicado: this.estaErradicado,
+        }
     }
 }

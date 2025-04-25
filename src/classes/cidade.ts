@@ -1,5 +1,15 @@
 import { Doenca } from './doenca'
 import { Jogador } from './jogador'
+import { NomePersonagem } from './personagem'
+
+export interface CidadeToObject {
+    nome: NomeCidade
+    cor: COR_ENUM
+    temCentro: boolean
+    cubosDoenca: Record<COR_ENUM, number>
+    jogadores: NomePersonagem[]
+    conexoes: NomeCidade[]
+}
 
 export class Cidade {
     private nome: NomeCidade
@@ -37,10 +47,6 @@ export class Cidade {
         return this.cor
     }
 
-    getConexoes() {
-        return this.conexoes
-    }
-
     adicionarCentroPesquisa() {
         if (this.temCentro) {
             throw new Error('Cidade já tem centro de pesquisa')
@@ -53,10 +59,14 @@ export class Cidade {
         doenca: Doenca,
         cidadesQueJaSofreramSurto = new Set<Cidade>(),
     ) {
+        if (doenca.getEstaErradicado()) {
+            throw new Error('Doença erradicada')
+        }
+
         const quantidadeAtual = this.cubosDoenca.get(doenca.getCor())!
 
         if (quantidadeAtual === 3) {
-            if (cidadesQueJaSofreramSurto.has(this)) return
+            if (cidadesQueJaSofreramSurto.has(this)) return true
 
             cidadesQueJaSofreramSurto.add(this)
 
@@ -64,12 +74,14 @@ export class Cidade {
                 cidade.adicionarCubo(doenca, cidadesQueJaSofreramSurto)
             })
 
-            return
+            return true
         }
 
         doenca.retirarCubos(1)
 
         this.cubosDoenca.set(doenca.getCor(), quantidadeAtual + 1)
+
+        return false
     }
 
     tratarDoencas(doenca: Doenca) {
@@ -132,12 +144,18 @@ export class Cidade {
         return this.jogadores.length > 0
     }
 
-    getCubosDoenca() {
-        return this.cubosDoenca
-    }
-
-    getJogadores() {
-        return this.jogadores
+    toObject(): CidadeToObject {
+        return {
+            nome: this.nome,
+            cor: this.cor,
+            temCentro: this.temCentro,
+            cubosDoenca: Object.fromEntries(this.cubosDoenca) as Record<
+                COR_ENUM,
+                number
+            >,
+            jogadores: this.jogadores.map(jogador => jogador.getPersonagem()),
+            conexoes: this.conexoes.map(cidade => cidade.getNome()),
+        }
     }
 }
 
@@ -146,59 +164,6 @@ export enum COR_ENUM {
     AZUL = 'AZUL',
     PRETO = 'PRETO',
     VERMELHO = 'VERMELHO',
-}
-
-export enum CIDADE_ENUM {
-    SAN_FRANCISCO = 'San Francisco',
-    CHICAGO = 'Chicago',
-    ATLANTA = 'Atlanta',
-    MONTREAL = 'Montreal',
-    NEW_YORK = 'New York',
-    WASHINGTON = 'Washington',
-    MADRID = 'Madrid',
-    LONDON = 'London',
-    PARIS = 'Paris',
-    ESSEN = 'Essen',
-    MILAN = 'Milan',
-    ST_PETERSBURG = 'St. Petersburg',
-
-    LOS_ANGELES = 'Los Angeles',
-    MEXICO_CITY = 'Mexico City',
-    MIAMI = 'Miami',
-    BOGOTA = 'Bogotá',
-    LIMA = 'Lima',
-    SANTIAGO = 'Santiago',
-    BUENOS_AIRES = 'Buenos Aires',
-    SAO_PAULO = 'São Paulo',
-    LAGOS = 'Lagos',
-    KINSHASA = 'Kinshasa',
-    JOHANNESBURG = 'Johannesburg',
-
-    ALGIERS = 'Algiers',
-    CAIRO = 'Cairo',
-    ISTANBUL = 'Istanbul',
-    BAGHDAD = 'Baghdad',
-    TEHRAN = 'Tehran',
-    MOSCOW = 'Moscow',
-    RIYADH = 'Riyadh',
-    KARACHI = 'Karachi',
-    DELHI = 'Delhi',
-    MUMBAI = 'Mumbai',
-    CHENNAI = 'Chennai',
-    KOLKATA = 'Kolkata',
-
-    BEIJING = 'Beijing',
-    SEOUL = 'Seoul',
-    TOKYO = 'Tokyo',
-    SHANGHAI = 'Shanghai',
-    OSAKA = 'Osaka',
-    TAIPEI = 'Taipei',
-    HONG_KONG = 'Hong Kong',
-    BANGKOK = 'Bangkok',
-    MANILA = 'Manila',
-    HO_CHI_MINH_CITY = 'Ho Chi Minh City',
-    JAKARTA = 'Jakarta',
-    SYDNEY = 'Sydney',
 }
 
 export type NomeCidade =

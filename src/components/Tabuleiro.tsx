@@ -1,5 +1,5 @@
 import { Cidade, COR_ENUM, NomeCidade } from '../classes/cidade'
-import { Jogo } from '../classes/jogo'
+import { Jogo, JogoToObject } from '../classes/jogo'
 import { Personagem } from '../types'
 import { CentroPesquisa } from './CentroPesquisa'
 import { CuboDoenca } from './CuboDoenca'
@@ -262,8 +262,8 @@ const mapeamentoCor = {
 }
 
 interface TabuleiroProps {
-    jogo: Jogo
-    onClickCidade: (cidade: Cidade) => void
+    jogo: JogoToObject
+    onClickCidade: (nomeCidadeDestino: NomeCidade) => void
 }
 
 export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
@@ -294,12 +294,15 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
 
                     {/* Conexões */}
                     {coordenadasCidades.map(({ nomeCidade, x, y }) => {
-                        const cidade = jogo.getCidade(nomeCidade)
-                        const cidadesConectadas = cidade.getConexoes()
+                        const cidade = jogo.cidades.find(
+                            cidade => cidade.nome === nomeCidade,
+                        )!
 
-                        return cidadesConectadas.map(cidade => {
+                        const cidadesConectadas = cidade.conexoes
+
+                        return cidadesConectadas.map(nomeCidadeConectada => {
                             const nomeA = nomeCidade
-                            const nomeB = cidade.getNome()
+                            const nomeB = nomeCidadeConectada
 
                             const chave = [nomeA, nomeB].sort().join('-')
 
@@ -309,13 +312,13 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
 
                             const cidadeConectada = coordenadasCidades.find(
                                 elemento =>
-                                    elemento.nomeCidade === cidade.getNome(),
+                                    elemento.nomeCidade === nomeCidadeConectada,
                             )
 
                             return cidadeConectada ? (
                                 <line
                                     className="drop-shadow-[0_0_6px_rgba(103,235,255,1)]"
-                                    key={cidade.getNome()}
+                                    key={nomeCidadeConectada}
                                     x1={x}
                                     y1={y}
                                     x2={cidadeConectada.x}
@@ -329,18 +332,16 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
 
                     {/* Cidades */}
                     {coordenadasCidades.map(coordCidade => {
-                        const cor =
-                            'fill-' +
-                            mapeamentoCor[
-                                jogo.getCidade(coordCidade.nomeCidade).getCor()
-                            ]
+                        const cidade = jogo.cidades.find(
+                            cidade => cidade.nome === coordCidade.nomeCidade,
+                        )!
 
-                        const cidade = jogo.getCidade(coordCidade.nomeCidade)
+                        const cor = 'fill-' + mapeamentoCor[cidade.cor]
 
                         return (
                             <g
                                 key={coordCidade.nomeCidade}
-                                onClick={() => onClickCidade(cidade)}
+                                onClick={() => onClickCidade(cidade.nome)}
                                 cursor="pointer"
                             >
                                 <circle
@@ -348,7 +349,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                     cx={coordCidade.x}
                                     cy={coordCidade.y}
                                     r="10"
-                                    fill={mapeamentoCor[cidade.getCor()]}
+                                    fill={mapeamentoCor[cidade.cor]}
                                     strokeWidth="2"
                                 />
                                 <text
@@ -362,8 +363,8 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                 </text>
 
                                 {/* Jogadores na cidade */}
-                                {cidade.getJogadores().map((jogador, idx) => {
-                                    const total = cidade.getJogadores().length
+                                {cidade.jogadores.map((jogador, idx) => {
+                                    const total = cidade.jogadores.length
                                     const spacing = 10
                                     const offset = ((total + 1.5) * spacing) / 2
                                     const x =
@@ -378,8 +379,6 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                             cor={
                                                 mapeamentoCorPersonagens[
                                                     jogador
-                                                        .getPersonagem()
-                                                        .getNome()
                                                 ]
                                             }
                                         />
@@ -387,7 +386,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                 })}
 
                                 {/* Centro de pesquisa */}
-                                {cidade.temCentroPesquisa() && (
+                                {cidade.temCentro && (
                                     <CentroPesquisa
                                         x={coordCidade.x - 12}
                                         y={coordCidade.y - 12}
@@ -396,8 +395,11 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                 )}
 
                                 {/* Cubos na cidade */}
-                                {Array.from(
-                                    cidade.getCubosDoenca().entries(),
+                                {(
+                                    Object.entries(cidade.cubosDoenca) as [
+                                        COR_ENUM,
+                                        number,
+                                    ][]
                                 ).flatMap(([cor, quantidade], indiceCor) => {
                                     if (quantidade !== 0) nivelCubos++
 

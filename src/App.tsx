@@ -1,41 +1,30 @@
 import { useState } from 'react'
-import { DIFICULDADE_ENUM, Jogo } from './classes/jogo'
+import { DIFICULDADE_ENUM, Jogo, JogoToObject } from './classes/jogo'
 import { JogoIniciado } from './components/JogoIniciado'
 import { Turno } from './components/Turno'
 import { Tabuleiro } from './components/Tabuleiro'
-import { Cidade } from './classes/cidade'
+import { NomeCidade } from './classes/cidade'
 import { Acao, Cor } from './types'
-
-enum COR_ENUM {
-    AMARELO = 'AMARELO',
-    AZUL = 'AZUL',
-    PRETO = 'PRETO',
-    VERMELHO = 'VERMELHO',
-}
-
-const mapeamentoCorParaCorEnum = {
-    amarelo: COR_ENUM.AMARELO,
-    azul: COR_ENUM.AZUL,
-    preto: COR_ENUM.PRETO,
-    vermelho: COR_ENUM.VERMELHO,
-}
+import { mapeamentoCorParaCorEnum } from './utils/mapeamentos'
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
     const [jogo, setJogo] = useState<Jogo | null>(null)
+    const [estadoJogo, setEstadoJogo] = useState<JogoToObject | null>(null)
     const [qtdJogadores, setQtdJogadores] = useState(2)
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
-    const [_, setReenderizar] = useState(0)
-
     const [acao, setAcao] = useState<Acao | null>(null)
 
-    function onClickCidade(cidade: Cidade) {
-        if (acao === 'voo direto') jogo!.moverJogadorPorVooDireto(cidade)
-        else if (acao === 'balsa') jogo!.moverJogadorPorBalsa(cidade)
-        else if (acao === 'voo fretado') jogo!.moverJogadorPorVooFretado(cidade)
-        else if (acao === 'ponte aerea') jogo!.moverJogadorPorPonteAerea(cidade)
+    function handleMover(nomeCidade: NomeCidade) {
+        if (acao === 'voo direto') jogo!.moverJogadorPorVooDireto(nomeCidade)
+        else if (acao === 'balsa') jogo!.moverJogadorPorBalsa(nomeCidade)
+        else if (acao === 'voo fretado')
+            jogo!.moverJogadorPorVooFretado(nomeCidade)
+        else if (acao === 'ponte aerea')
+            jogo!.moverJogadorPorPonteAerea(nomeCidade)
 
         setAcao(null)
+        setEstadoJogo(jogo!.toObject())
     }
 
     function handleAcao(acao: Acao) {
@@ -49,34 +38,32 @@ export function App() {
             jogo!.tratarDoenca()
         }
 
-        setReenderizar(state => state + 1)
+        setEstadoJogo(jogo!.toObject())
     }
 
     const iniciarJogo = () => {
         const jogo = new Jogo(qtdJogadores, dificuldade)
+
+        setEstadoJogo(jogo.toObject())
+
         setJogo(jogo)
     }
-
-    console.log(
-        'DOENCAS NA CIDADE ATUAL',
-        jogo?.getJogadorAtual().getLocalizacao().getCubosDoenca(),
-    )
 
     return (
         <div
             className={`flex flex-col items-center justify-center h-screen w-screen relative ${jogo ? 'bg-[#001b33]' : 'bg-stone-950'}`}
         >
-            {jogo ? (
+            {estadoJogo ? (
                 <>
-                    <Tabuleiro jogo={jogo} onClickCidade={onClickCidade} />
+                    <Tabuleiro jogo={estadoJogo} onClickCidade={handleMover} />
                     <JogoIniciado
-                        jogo={jogo}
+                        jogadores={estadoJogo.jogadores}
                         onFinalizarTurno={() => setFase('turno')}
                     />
 
                     {fase === 'turno' ? (
                         <Turno
-                            jogo={jogo}
+                            jogo={estadoJogo}
                             acaoSelecionada={acao}
                             onClickAcao={handleAcao}
                             onClickTratarDoenca={handleTratarDoenca}

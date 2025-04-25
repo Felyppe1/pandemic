@@ -5,6 +5,7 @@ import {
     CartaEvento,
     CartaInfeccao,
     CartaJogador,
+    CartaToObject,
     FinanciamentoGovernamental,
     Prognostico,
     RecursoExtra,
@@ -45,6 +46,11 @@ export abstract class Baralho {
 
         return cartas
     }
+}
+
+export interface BaralhoJogadorToObject {
+    cartas: CartaToObject[]
+    descartes: CartaToObject[]
 }
 
 export class BaralhoJogador extends Baralho {
@@ -112,34 +118,17 @@ export class BaralhoJogador extends Baralho {
 
     toObject() {
         return {
-            cartas: this.cartas.map(carta => this.mapearCarta(carta)),
-            descartes: this.descartes.map(carta => this.mapearCarta(carta)),
+            cartas: this.cartas.map(carta => carta.toObject()),
+            descartes: this.descartes.map(carta => carta.toObject()),
         }
     }
+}
 
-    private mapearCarta(carta: Carta) {
-        if (carta instanceof CartaCidade) {
-            return {
-                tipo: 'Carta Cidade',
-                nome: carta.getNome(),
-                cor: carta.getCor(),
-            }
-        }
-
-        if (carta instanceof CartaEpidemia) {
-            return {
-                tipo: 'Carta Epidemia',
-            }
-        }
-
-        if (carta instanceof CartaEvento) {
-            return {
-                tipo: 'Carta Evento',
-                nome: carta.getNome(),
-                descricao: carta.getDescricao(),
-            }
-        }
-    }
+export interface BaralhoInfeccaoToObject {
+    cartas: CartaToObject[]
+    descartes: CartaToObject[]
+    listaVelocidadeInfeccao: number[]
+    indiceVelocidadeInfeccao: number
 }
 
 export class BaralhoInfeccao extends Baralho {
@@ -227,24 +216,8 @@ export class BaralhoInfeccao extends Baralho {
 
     toObject() {
         return {
-            cartas: this.cartas.map(carta => {
-                if (carta instanceof CartaInfeccao) {
-                    return {
-                        tipo: 'Carta Infecção',
-                        nome: carta.getNome(),
-                        cor: carta.getCor(),
-                    }
-                }
-            }),
-            descartes: this.descartes.map(carta => {
-                if (carta instanceof CartaInfeccao) {
-                    return {
-                        tipo: 'Carta Infecção',
-                        nome: carta.getNome(),
-                        cor: carta.getCor(),
-                    }
-                }
-            }),
+            cartas: this.cartas.map(carta => carta.toObject()),
+            descartes: this.descartes.map(carta => carta.toObject()),
             listaVelocidadeInfeccao: this.listaVelocidadeInfeccao,
             indiceVelocidadeInfeccao: this.indiceVelocidadeInfeccao,
         }

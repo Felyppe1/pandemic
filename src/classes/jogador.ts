@@ -1,18 +1,35 @@
 import { Baralho, BaralhoInfeccao, BaralhoJogador } from './baralho'
-import { Carta, CartaCidade, CartaEvento, CartaJogador } from './carta'
+import {
+    Carta,
+    CartaCidade,
+    CartaEvento,
+    CartaJogador,
+    CartaToObject,
+} from './carta'
 import { Cidade, NomeCidade } from './cidade'
 import {
     EspecialistaContingencia,
     NomePersonagem,
     Personagem,
+    PersonagemToObject,
 } from './personagem'
+
+export interface JogadorToObject {
+    personagem: PersonagemToObject
+    localizacao: NomeCidade
+    cartas: CartaToObject[]
+}
 
 export class Jogador {
     private cartas: CartaJogador[]
     private personagem: Personagem
     private localizacao: Cidade
 
-    constructor(cartas: Carta[], personagem: Personagem, localizacao: Cidade) {
+    constructor(
+        cartas: CartaJogador[],
+        personagem: Personagem,
+        localizacao: Cidade,
+    ) {
         this.cartas = cartas
         this.personagem = personagem
 
@@ -142,23 +159,23 @@ export class Jogador {
         return this.localizacao.getCoresDasDoencasPresentes()
     }
 
-    getCorDaCidadeAtual() {
-        return this.localizacao.getCor()
-    }
-
     ePersonagem(nome: NomePersonagem) {
         return this.personagem.getNome() === nome
     }
 
-    getCartas() {
-        return [...this.cartas]
+    getPersonagem() {
+        return this.personagem.getNome()
     }
 
     getLocalizacao() {
         return this.localizacao
     }
 
-    getPersonagem() {
-        return this.personagem
+    toObject(): JogadorToObject {
+        return {
+            personagem: this.personagem.toObject(),
+            localizacao: this.localizacao.getNome(),
+            cartas: this.cartas.map(carta => carta.toObject()),
+        }
     }
 }

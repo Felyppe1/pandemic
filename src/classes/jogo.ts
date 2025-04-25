@@ -1,10 +1,19 @@
 import { cidades } from '../dados/cidades'
-import { BaralhoInfeccao, BaralhoJogador } from './baralho'
+import {
+    BaralhoInfeccao,
+    BaralhoInfeccaoToObject,
+    BaralhoJogador,
+    BaralhoJogadorToObject,
+} from './baralho'
 import { CartaEpidemia, CartaInfeccao } from './carta'
-import { Cidade, COR_ENUM, NomeCidade } from './cidade'
-import { Doenca } from './doenca'
-import { Jogador } from './jogador'
-import { escolherPersonagemAleatoriamente, NomePersonagem } from './personagem'
+import { Cidade, CidadeToObject, COR_ENUM, NomeCidade } from './cidade'
+import { Doenca, DoencaToObject } from './doenca'
+import { Jogador, JogadorToObject } from './jogador'
+import {
+    EspecialistaContingencia,
+    NomePersonagem,
+    Personagem,
+} from './personagem'
 
 export enum DIFICULDADE_ENUM {
     FACIL = 'FACIL',
@@ -36,11 +45,31 @@ export class Jogo {
         this.doencas = new Map()
         this.indiceJogadorAtual = 0
         this.acoesRestantes = 4
+        this.cidades = []
+        this.jogadores = []
 
         Object.values(COR_ENUM).forEach(cor => {
             this.doencas.set(cor, new Doenca(cor))
         })
 
+        this.criarCidadesEConexoes()
+
+        this.baralhoJogador = new BaralhoJogador(this.cidades)
+
+        this.criarJogadores(qtdJogadores)
+
+        this.baralhoJogador.definirDificuldade(this.dificuldade)
+
+        const cidadeAtlanta = this.getCidade('Atlanta')
+
+        cidadeAtlanta.adicionarCentroPesquisa()
+
+        this.baralhoInfeccao = new BaralhoInfeccao(this.cidades)
+
+        this.infectarCidadesNoInicioDoJogo()
+    }
+
+    private criarCidadesEConexoes() {
         this.cidades = cidades.map(
             cidade => new Cidade(cidade.nome, cidade.cor),
         )
@@ -54,8 +83,18 @@ export class Jogo {
                 cidade.adicionarConexao(cidadeConectada)
             })
         })
+    }
 
-        this.baralhoJogador = new BaralhoJogador(this.cidades)
+    private criarJogadores(qtdJogadores: number) {
+        const personagens = [
+            new EspecialistaContingencia(),
+            new Personagem('Agente de Viagens'),
+            new Personagem('Médico'),
+            new Personagem('Especialista em Operações'),
+            new Personagem('Especialista em Quarentena'),
+            new Personagem('Pesquisadora'),
+            new Personagem('Cientista'),
+        ]
 
         const numeroCartas = cartasPorJogador[qtdJogadores] ?? 2
 
@@ -66,19 +105,13 @@ export class Jogo {
 
             return new Jogador(
                 cartas,
-                escolherPersonagemAleatoriamente(),
+                removerItemAleatorio(personagens),
                 this.getCidade('Atlanta'),
             )
         })
+    }
 
-        this.baralhoJogador.definirDificuldade(this.dificuldade)
-
-        const cidadeAtlanta = this.getCidade('Atlanta')
-
-        cidadeAtlanta.adicionarCentroPesquisa()
-
-        this.baralhoInfeccao = new BaralhoInfeccao(this.cidades)
-
+    private infectarCidadesNoInicioDoJogo() {
         for (let i = 3; i > 0; i--) {
             for (let j = 0; j < 3; j++) {
                 const cartaInfeccao =
@@ -95,25 +128,33 @@ export class Jogo {
         }
     }
 
-    moverJogadorPorBalsa(cidade: Cidade) {
+    moverJogadorPorBalsa(nomeCidadeDestino: NomeCidade) {
+        const cidade = this.getCidade(nomeCidadeDestino)
+
         this.getJogadorAtual().balsa(cidade)
 
         this.verificarTurno()
     }
 
-    moverJogadorPorVooDireto(cidade: Cidade) {
+    moverJogadorPorVooDireto(nomeCidadeDestino: NomeCidade) {
+        const cidade = this.getCidade(nomeCidadeDestino)
+
         this.getJogadorAtual().vooDireto(cidade, this.baralhoJogador)
 
         this.verificarTurno()
     }
 
-    moverJogadorPorVooFretado(cidade: Cidade) {
+    moverJogadorPorVooFretado(nomeCidadeDestino: NomeCidade) {
+        const cidade = this.getCidade(nomeCidadeDestino)
+
         this.getJogadorAtual().vooFretado(cidade, this.baralhoJogador)
 
         this.verificarTurno()
     }
 
-    moverJogadorPorPonteAerea(cidade: Cidade) {
+    moverJogadorPorPonteAerea(nomeCidadeDestino: NomeCidade) {
+        const cidade = this.getCidade(nomeCidadeDestino)
+
         this.getJogadorAtual().ponteAerea(cidade)
 
         this.verificarTurno()
@@ -253,7 +294,17 @@ export class Jogo {
 
                 const doenca = this.getDoenca(cartaInfeccao.getCor())
 
-                for (let j = 0; j < 3; j++) cidade.adicionarCubo(doenca)
+                try {
+                    for (let i = 0; i < 3; i++) {
+                        if (cidade.adicionarCubo(doenca)) {
+                            this.avancarMarcadorSurto()
+
+                            break
+                        }
+                    }
+                } catch (error) {
+                    if (error instanceof Error) console.log(error.message)
+                }
 
                 this.baralhoInfeccao.aumentarVelocidadeInfeccao()
 
@@ -262,14 +313,14 @@ export class Jogo {
                 this.baralhoInfeccao.intensificar()
 
                 this.baralhoJogador.descartar(carta)
-            }
-
-            try {
-                this.getJogadorAtual().comprarCarta(carta)
-            } catch (error) {
-                // TODO: adicionar carta para ele escolher em uma lista
-                if (error instanceof Error) {
-                    console.error(error.message)
+            } else {
+                try {
+                    this.getJogadorAtual().comprarCarta(carta)
+                } catch (error) {
+                    // TODO: adicionar carta para ele escolher em uma lista
+                    if (error instanceof Error) {
+                        console.error(error.message)
+                    }
                 }
             }
         })
@@ -283,19 +334,23 @@ export class Jogo {
 
             const doenca = this.getDoenca(cidade.getCor())
 
-            cidade.adicionarCubo(doenca)
+            try {
+                if (cidade.adicionarCubo(doenca)) this.avancarMarcadorSurto()
+            } catch (error) {
+                if (error instanceof Error) console.log(error.message)
+            }
 
             this.baralhoInfeccao.descartar(carta)
         }
     }
 
-    // private avancarMarcadorSurto() {
-    //     if (this.marcadorSurto === 7) {
-    //         throw new Error('O surto chegou ao limite')
-    //     }
+    private avancarMarcadorSurto() {
+        if (this.marcadorSurto === 7) {
+            throw new Error('O surto chegou ao limite')
+        }
 
-    //     this.marcadorSurto += 1
-    // }
+        this.marcadorSurto += 1
+    }
 
     getJogadorPeloSeuIndice(indiceJogador: number) {
         if (indiceJogador < 0 || indiceJogador >= this.jogadores.length) {
@@ -325,31 +380,43 @@ export class Jogo {
         return this.cidades.find(cidade => cidade.getNome() === nome)!
     }
 
-    getMarcadorSurto() {
-        return this.marcadorSurto
-    }
-
-    getJogadores() {
-        return this.jogadores
-    }
-
     getJogadorAtual() {
         return this.jogadores[this.indiceJogadorAtual]
     }
 
-    getAcoesRestantes() {
-        return this.acoesRestantes
+    toObject(): JogoToObject {
+        return {
+            jogadores: this.jogadores.map(jogador => jogador.toObject()),
+            baralhoJogador: this.baralhoJogador.toObject(),
+            baralhoInfeccao: this.baralhoInfeccao.toObject(),
+            doencas: Array.from(this.doencas.values()).map(doenca =>
+                doenca.toObject(),
+            ),
+            cidades: this.cidades.map(cidade => cidade.toObject()),
+            dificuldade: this.dificuldade,
+            marcadorSurto: this.marcadorSurto,
+            indiceJogadorAtual: this.indiceJogadorAtual,
+            acoesRestantes: this.acoesRestantes,
+        }
     }
+}
 
-    getBaralhoJogador() {
-        return this.baralhoJogador
-    }
+export interface JogoToObject {
+    jogadores: JogadorToObject[]
+    baralhoJogador: BaralhoJogadorToObject
+    baralhoInfeccao: BaralhoInfeccaoToObject
+    doencas: DoencaToObject[]
+    cidades: CidadeToObject[]
+    dificuldade: DIFICULDADE_ENUM
+    marcadorSurto: number
+    indiceJogadorAtual: number
+    acoesRestantes: number
+}
 
-    getBaralhoInfeccao() {
-        return this.baralhoInfeccao
-    }
+export function removerItemAleatorio<T>(array: T[]): T {
+    if (array.length === 0) throw new Error('Arrray vazio')
 
-    getDoencas() {
-        return this.doencas
-    }
+    const indiceAleatorio = Math.floor(Math.random() * array.length)
+    const [removido] = array.splice(indiceAleatorio, 1)
+    return removido
 }

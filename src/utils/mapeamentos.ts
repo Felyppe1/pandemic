@@ -1,4 +1,4 @@
-import { Cor, Personagem } from '../types'
+import { Cor, COR_ENUM, Personagem } from '../types'
 
 export const mapeamentoCor: Record<Cor, string> = {
     azul: 'bg-blue-400',
@@ -26,4 +26,11 @@ export const mapeamentoFotoPersonagens: Record<Personagem, string> = {
     'Especialista em Quarentena': '/rosto/especialista-quarentena.png',
     'Especialista em Planos de Contingência':
         '/rosto/especialista-contingencia.png',
+}
+
+export const mapeamentoCorParaCorEnum = {
+    amarelo: COR_ENUM.AMARELO,
+    azul: COR_ENUM.AZUL,
+    preto: COR_ENUM.PRETO,
+    vermelho: COR_ENUM.VERMELHO,
 }

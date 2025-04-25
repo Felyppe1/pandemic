@@ -1,5 +1,5 @@
-import { CartaCidade, CartaEvento } from '../classes/carta'
-import { Jogo } from '../classes/jogo'
+import { CartaCidadeToObject, CartaEventoToObject } from '../classes/carta'
+import { JogoToObject } from '../classes/jogo'
 import { COR_ENUM } from '../classes/cidade'
 import { MenuSuperior } from './MenuSuperior'
 import { MenuJogadores } from './MenuJogadores'
@@ -14,7 +14,7 @@ const mapeamentoEnumCor = {
 } as const
 
 interface TurnoProps {
-    jogo: Jogo
+    jogo: JogoToObject
     acaoSelecionada: Acao | null
     onClickAcao: (acao: Acao) => void
     onClickTratarDoenca: (cor?: Cor) => void
@@ -26,20 +26,20 @@ export function Turno({
     onClickAcao,
     onClickTratarDoenca,
 }: TurnoProps) {
-    const baralhoInfeccao = jogo.getBaralhoInfeccao().toObject()
+    const baralhoInfeccao = jogo.baralhoInfeccao
 
     return (
         <>
             <MenuSuperior
-                cartasRestantes={
-                    jogo.getBaralhoJogador().toObject().cartas.length
-                }
+                cartasRestantes={jogo.baralhoJogador.cartas.length}
                 cubos={
                     Object.fromEntries(
-                        Array.from(jogo.getDoencas()).map(([cor, doenca]) => [
-                            mapeamentoEnumCor[cor],
-                            doenca.getCubosRestantes(),
-                        ]),
+                        Array.from(jogo.doencas).map(
+                            ({ cor, cubosRestantes }) => [
+                                mapeamentoEnumCor[cor],
+                                cubosRestantes,
+                            ],
+                        ),
                     ) as Record<Cor, number>
                 }
                 velocidadeInfeccao={
@@ -47,39 +47,45 @@ export function Turno({
                         baralhoInfeccao.indiceVelocidadeInfeccao
                     ]
                 }
-                surtos={jogo.getMarcadorSurto()}
+                surtos={jogo.marcadorSurto}
                 centrosPesquisa={1}
             />
 
             <MenuJogadores
-                jogadores={jogo.getJogadores().map(jogador => {
+                jogadores={jogo.jogadores.map(jogador => {
                     return {
-                        nome: jogador.getPersonagem().getNome(),
-                        personagem: jogador.getPersonagem().getNome(),
-                        eJogadorAtual: jogo.getJogadorAtual() === jogador,
-                        cartas: jogador.getCartas().map(carta => {
-                            if (carta instanceof CartaCidade) {
+                        nome: jogador.personagem.nome,
+                        personagem: jogador.personagem.nome,
+                        eJogadorAtual:
+                            jogo.jogadores[jogo.indiceJogadorAtual] === jogador,
+                        cartas: jogador.cartas.map(carta => {
+                            if (carta.tipo === 'carta cidade') {
+                                const cartaCidade = carta as CartaCidadeToObject
+
                                 let corMapeada:
                                     | 'amarelo'
                                     | 'azul'
                                     | 'preto'
                                     | 'vermelho'
-                                if (carta.getCor() === COR_ENUM.AMARELO)
+
+                                if (cartaCidade.cor === COR_ENUM.AMARELO)
                                     corMapeada = 'amarelo'
-                                else if (carta.getCor() === COR_ENUM.AZUL)
+                                else if (cartaCidade.cor === COR_ENUM.AZUL)
                                     corMapeada = 'azul'
-                                else if (carta.getCor() === COR_ENUM.PRETO)
+                                else if (cartaCidade.cor === COR_ENUM.PRETO)
                                     corMapeada = 'preto'
                                 else corMapeada = 'vermelho'
 
                                 return {
-                                    nome: carta.getNome(),
+                                    nome: cartaCidade.nome,
                                     tipo: 'carta cidade',
                                     cor: corMapeada,
                                 }
-                            } else if (carta instanceof CartaEvento) {
+                            } else if (carta.tipo === 'carta evento') {
+                                const cartaEvento = carta as CartaEventoToObject
+
                                 return {
-                                    nome: carta.getNome(),
+                                    nome: cartaEvento.nome,
                                     tipo: 'carta evento',
                                 }
                             } else {
@@ -94,11 +100,10 @@ export function Turno({
             />
 
             <MenuInferior
-                nomePersonagem={jogo
-                    .getJogadorAtual()
-                    .getPersonagem()
-                    .getNome()}
-                acoesRestantes={jogo.getAcoesRestantes()}
+                nomePersonagem={
+                    jogo.jogadores[jogo.indiceJogadorAtual].personagem.nome
+                }
+                acoesRestantes={jogo.acoesRestantes}
                 acaoSelecionada={acaoSelecionada}
                 onClickAcaoMovimento={onClickAcao}
                 onClickTratarDoenca={onClickTratarDoenca}

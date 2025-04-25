@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Jogo } from '../classes/jogo'
+import { JogadorToObject } from '../classes/jogador'
 
 interface JogoIniciadoProps {
-    jogo: Jogo
+    jogadores: JogadorToObject[]
     onFinalizarTurno: () => void
 }
 
-export function JogoIniciado({ jogo, onFinalizarTurno }: JogoIniciadoProps) {
+export function JogoIniciado({
+    jogadores,
+    onFinalizarTurno,
+}: JogoIniciadoProps) {
     const [mostrar, setMostrar] = useState<'jogadores' | 'mensagem' | null>(
         null,
     )
 
     useEffect(() => {
-        if (jogo) {
+        if (jogadores) {
             setMostrar('jogadores')
 
             const timer1 = setTimeout(() => setMostrar('mensagem'), 5000)
@@ -26,12 +29,12 @@ export function JogoIniciado({ jogo, onFinalizarTurno }: JogoIniciadoProps) {
                 clearTimeout(timer2)
             }
         }
-    }, [jogo])
+    }, [])
 
     if (mostrar === 'jogadores') {
         return (
             <div className="absolute flex justify-evenly w-full flex-wrap gap-6 px-8">
-                {jogo.getJogadores().map((jogador, index) => {
+                {jogadores.map((jogador, index) => {
                     return (
                         <div
                             key={index}
@@ -42,10 +45,11 @@ export function JogoIniciado({ jogo, onFinalizarTurno }: JogoIniciadoProps) {
                             </h2>
                             <div className="border-t border-gray-600 pt-4">
                                 <p className="text-lg font-semibold mb-2">
-                                    {jogador.getPersonagem().getNome()}
+                                    {jogador.personagem.nome}
                                 </p>
                                 <p className="text-sm text-gray-200 whitespace-pre-line">
-                                    {jogador.getPersonagem().getDescricao()}
+                                    CONSERTAR
+                                    {/* {jogador.} */}
                                 </p>
                             </div>
                         </div>

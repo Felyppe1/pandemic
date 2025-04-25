@@ -1,9 +1,12 @@
-import { CartaCidadeToObject, CartaEventoToObject } from '../classes/carta'
-import { JogoToObject } from '../classes/jogo'
-import { COR_ENUM } from '../classes/cidade'
+import {
+    CartaCidadeToObject,
+    CartaEventoToObject,
+} from '../../core/classes/carta'
+import { JogoToObject } from '../../core/classes/jogo'
+import { COR_ENUM } from '../../core/classes/cidade'
 import { MenuSuperior } from './MenuSuperior'
 import { MenuJogadores } from './MenuJogadores'
-import { Acao, Cor } from '../types'
+import { Acao, Cor } from '../../types'
 import { MenuInferior } from './MenuInferior'
 
 const mapeamentoEnumCor = {
@@ -20,7 +23,7 @@ interface TurnoProps {
     onClickTratarDoenca: (cor?: Cor) => void
 }
 
-export function Turno({
+export function ControlesDoJogo({
     jogo,
     acaoSelecionada,
     onClickAcao,

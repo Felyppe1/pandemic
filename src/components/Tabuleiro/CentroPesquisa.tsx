@@ -1,0 +1,16 @@
+interface Props {
+    x: number
+    y: number
+    scale?: number
+}
+
+export function CentroPesquisa({ x, y, scale = 1 }: Props) {
+    return (
+        <g transform={`translate(${x}, ${y}) scale(${scale})`}>
+            <path
+                d="M224,115.53906V208a16.01833,16.01833,0,0,1-16,16H48a16.01833,16.01833,0,0,1-16-16V115.53857a16.03346,16.03346,0,0,1,5.23633-11.83837l79.99414-72.73438a15.93607,15.93607,0,0,1,21.52637-.001l80.00683,72.73536.001.001A16.03466,16.03466,0,0,1,224,115.53906Z"
+                className="fill-white"
+            ></path>
+        </g>
+    )
+}

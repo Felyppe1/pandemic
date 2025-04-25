@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { DIFICULDADE_ENUM, Jogo, JogoToObject } from './classes/jogo'
+import { DIFICULDADE_ENUM, Jogo, JogoToObject } from './core/classes/jogo'
 import { JogoIniciado } from './components/JogoIniciado'
-import { Turno } from './components/Turno'
+import { ControlesDoJogo } from './components/ControlesDoJogo'
 import { Tabuleiro } from './components/Tabuleiro'
-import { NomeCidade } from './classes/cidade'
+import { NomeCidade } from './core/classes/cidade'
 import { Acao, Cor } from './types'
 import { mapeamentoCorParaCorEnum } from './utils/mapeamentos'
 
@@ -62,7 +62,7 @@ export function App() {
                     />
 
                     {fase === 'turno' ? (
-                        <Turno
+                        <ControlesDoJogo
                             jogo={estadoJogo}
                             acaoSelecionada={acao}
                             onClickAcao={handleAcao}

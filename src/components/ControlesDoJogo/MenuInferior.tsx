@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Acao, Cor, Personagem } from '../types'
+import { Acao, Cor, Personagem } from '../../types'
 import { MdDirectionsBoat } from 'react-icons/md'
 import { BsFillAirplaneFill } from 'react-icons/bs'
 import { FaBridge, FaFlask } from 'react-icons/fa6'

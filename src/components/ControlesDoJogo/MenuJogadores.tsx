@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Carta, Personagem } from '../types'
 import {
     mapeamentoCor,
     mapeamentoCorPersonagens,
     mapeamentoFotoPersonagens,
-} from '../utils/mapeamentos'
+} from '../../utils/mapeamentos'
+import { Carta, Personagem } from '../../types'
 
 type Jogador = {
     nome: string

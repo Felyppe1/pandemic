@@ -1,6 +1,6 @@
-import { Cor } from '../types'
-import { CentroPesquisa } from './CentroPesquisaa'
-import { CuboDoenca } from './CuboDoencaa'
+import { Cor } from '../../types'
+import { CentroPesquisa } from '../CentroPesquisa'
+import { CuboDoenca } from '../CuboDoenca'
 
 type Props = {
     cartasRestantes: number

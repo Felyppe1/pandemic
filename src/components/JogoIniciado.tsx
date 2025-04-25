@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { JogadorToObject } from '../classes/jogador'
+import { JogadorToObject } from '../core/classes/jogador'
 
 interface JogoIniciadoProps {
     jogadores: JogadorToObject[]

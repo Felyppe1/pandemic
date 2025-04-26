@@ -1,6 +1,10 @@
 import { COR_ENUM, NomeCidade } from '../../core/classes/cidade'
 import { JogoToObject } from '../../core/classes/jogo'
-import { Personagem } from '../../types'
+import { Cor, Personagem } from '../../types'
+import {
+    mapeamentoCor,
+    mapeamentoCorPersonagens,
+} from '../../utils/mapeamentos'
 import { CentroPesquisa } from './CentroPesquisa'
 import { CuboDoenca } from './CuboDoenca'
 import { Peao } from './Peao'
@@ -244,22 +248,22 @@ const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     },
 ]
 
-const mapeamentoCorPersonagens: Record<Personagem, string> = {
-    'Agente de Viagens': '#d187f5',
-    Médico: '#f9943b',
-    Cientista: '#adadad',
-    Pesquisadora: '#c5b08c',
-    'Especialista em Operações': '#7cc66c',
-    'Especialista em Quarentena': '#006400',
-    'Especialista em Planos de Contingência': '#4fbfff',
-}
+// const mapeamentoCorPersonagens: Record<Personagem, string> = {
+//     'Agente de Viagens': '#d187f5',
+//     Médico: '#f9943b',
+//     Cientista: '#adadad',
+//     Pesquisadora: '#c5b08c',
+//     'Especialista em Operações': '#7cc66c',
+//     'Especialista em Quarentena': '#006400',
+//     'Especialista em Planos de Contingência': '#4fbfff',
+// }
 
-const mapeamentoCor = {
-    [COR_ENUM.AMARELO]: '#fdc700',
-    [COR_ENUM.AZUL]: '#155dfc',
-    [COR_ENUM.PRETO]: '#262626',
-    [COR_ENUM.VERMELHO]: '#c70036',
-}
+// const mapeamentoCor = {
+//     [COR_ENUM.AMARELO]: '#fdc700',
+//     [COR_ENUM.AZUL]: '#155dfc',
+//     [COR_ENUM.PRETO]: '#262626',
+//     [COR_ENUM.VERMELHO]: '#c70036',
+// }
 
 interface TabuleiroProps {
     jogo: JogoToObject
@@ -336,8 +340,12 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                             cidade => cidade.nome === coordCidade.nomeCidade,
                         )!
 
-                        const cor = 'fill-' + mapeamentoCor[cidade.cor]
-
+                        const cor =
+                            'fill-' +
+                            mapeamentoCor[
+                                cidade.cor.toLowerCase() as Cor
+                            ].replace(/^bg-/, '')
+                        console.log(cor)
                         return (
                             <g
                                 key={coordCidade.nomeCidade}
@@ -345,12 +353,12 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                 cursor="pointer"
                             >
                                 <circle
-                                    className={`drop-shadow-[0_0_6px_rgba(255,255,255,1)] ${cor}`}
+                                    className={`drop-shadow-[0_0_6px_rgba(255,255,255,1)] ${cor} stroke-2`}
                                     cx={coordCidade.x}
                                     cy={coordCidade.y}
                                     r="10"
-                                    fill={mapeamentoCor[cidade.cor]}
-                                    strokeWidth="2"
+                                    // fill={mapeamentoCor[cidade.cor]}
+                                    // strokeWidth="2"
                                 />
                                 <text
                                     x={coordCidade.x + 15}
@@ -370,17 +378,19 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                     const x =
                                         coordCidade.x - offset + idx * spacing
 
+                                    const cor =
+                                        'fill-' +
+                                        mapeamentoCorPersonagens[
+                                            jogador
+                                        ].replace(/^bg-/, '')
+
                                     return (
                                         <Peao
                                             key={idx}
                                             x={x}
                                             y={coordCidade.y - 40}
                                             scale={0.8}
-                                            cor={
-                                                mapeamentoCorPersonagens[
-                                                    jogador
-                                                ]
-                                            }
+                                            cor={cor}
                                         />
                                     )
                                 })}
@@ -403,6 +413,12 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                 ).flatMap(([cor, quantidade], indiceCor) => {
                                     if (quantidade !== 0) nivelCubos++
 
+                                    const corMapeada =
+                                        'fill-' +
+                                        mapeamentoCor[
+                                            cidade.cor.toLowerCase() as Cor
+                                        ].replace(/^bg-/, '')
+
                                     const cubos = Array.from({
                                         length: quantidade,
                                     }).map((_, i) => (
@@ -414,7 +430,7 @@ export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
                                                 2 +
                                                 nivelCubos * 6
                                             }
-                                            cor={mapeamentoCor[cor]}
+                                            cor={corMapeada}
                                         />
                                     ))
 

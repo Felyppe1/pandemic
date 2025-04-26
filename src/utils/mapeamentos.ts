@@ -1,8 +1,8 @@
 import { Cor, COR_ENUM, Personagem } from '../types'
 
 export const mapeamentoCor: Record<Cor, string> = {
-    azul: 'bg-blue-400',
-    preto: 'bg-neutral-700',
+    azul: 'bg-[#155dfc]',
+    preto: 'bg-neutral-800',
     vermelho: 'bg-red-500',
     amarelo: 'bg-yellow-400',
 }

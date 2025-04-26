@@ -1,6 +1,6 @@
 import { COR_ENUM, NomeCidade } from '../../core/classes/cidade'
 import { JogoToObject } from '../../core/classes/jogo'
-import { Cor, Personagem } from '../../types'
+import { Cor } from '../../types'
 import {
     mapeamentoCor,
     mapeamentoCorPersonagens,

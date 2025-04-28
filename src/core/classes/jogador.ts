@@ -123,9 +123,7 @@ export class Jogador {
 
     comprarCartaDeFuncao(baralho: BaralhoJogador, nomeEvento: string) {
         if (this.personagem instanceof EspecialistaContingencia) {
-            const carta = baralho.comprarUmaCartaDeFuncao(nomeEvento)
-
-            this.personagem.comprarCartaDeFuncao(carta)
+            this.personagem.comprarCartaDeFuncao(nomeEvento, baralho)
         } else {
             throw new Error(
                 'Apenas o Especialista em planos de contingência pode fazer essa ação',

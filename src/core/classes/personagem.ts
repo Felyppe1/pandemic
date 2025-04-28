@@ -1,3 +1,4 @@
+import { BaralhoInfeccao, BaralhoJogador } from './baralho'
 import { CartaEvento } from './carta'
 
 export type NomePersonagem =
@@ -48,12 +49,14 @@ export class EspecialistaContingencia extends Personagem {
         this.cartaFuncao = null
     }
 
-    comprarCartaDeFuncao(carta: CartaEvento) {
+    comprarCartaDeFuncao(nomeEvento: string, baralhoJogador: BaralhoJogador) {
         if (this.cartaFuncao) {
             throw new Error('Já possui uma carta de função')
         }
 
-        this.cartaFuncao = carta
+        const cartaEvento = baralhoJogador.comprarCartaDeFuncao(nomeEvento)
+
+        this.cartaFuncao = cartaEvento
     }
 
     toObject(): EspecialistaContingenciaToObject {

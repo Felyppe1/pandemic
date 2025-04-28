@@ -99,7 +99,7 @@ export class BaralhoJogador extends Baralho {
         this.cartas = Baralho.embaralhar(this.cartas)
     }
 
-    comprarUmaCartaDeFuncao(nomeEvento: string) {
+    comprarCartaDeFuncao(nomeEvento: string) {
         const cartaEvento = this.descartes.find(
             carta =>
                 carta instanceof CartaEvento && carta.getNome() === nomeEvento,

@@ -1,4 +1,4 @@
-import { BaralhoInfeccao, BaralhoJogador } from './baralho'
+import { BaralhoJogador } from './baralho'
 import { CartaEvento } from './carta'
 
 export type NomePersonagem =

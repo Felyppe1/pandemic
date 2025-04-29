@@ -35,6 +35,7 @@ export class Jogo {
     private doencas: Map<COR_ENUM, Doenca>
     private cidades: Cidade[]
     private dificuldade: DIFICULDADE_ENUM
+    private centroPesquisasRestantes: number
     private marcadorSurto: number
     private indiceJogadorAtual: number
     private acoesRestantes: number
@@ -62,7 +63,9 @@ export class Jogo {
 
         const cidadeAtlanta = this.getCidade('Atlanta')
 
-        cidadeAtlanta.adicionarCentroPesquisa()
+        cidadeAtlanta.construirCentroPesquisa()
+
+        this.centroPesquisasRestantes = 5
 
         this.baralhoInfeccao = new BaralhoInfeccao(this.cidades)
 
@@ -185,6 +188,41 @@ export class Jogo {
         const cidade = this.getJogadorAtual().getLocalizacao()
 
         cidade.tratarDoencas(doenca)
+
+        this.verificarTurno()
+    }
+
+    construirCentroPesquisa(cidadeParaRemoverCentro?: NomeCidade) {
+        if (this.centroPesquisasRestantes === 0 && !cidadeParaRemoverCentro) {
+            throw new Error(
+                'É preciso remover centro de pesquisa de outra cidade',
+            )
+        }
+
+        if (cidadeParaRemoverCentro) {
+            const cidade = this.getCidade(cidadeParaRemoverCentro)
+
+            if (!cidade.temCentroPesquisa()) {
+                throw new Error('Cidade não tem centro de pesquisa')
+            }
+
+            cidade.removerCentroPesquisa()
+        }
+
+        // TODO: o que eu deveria fazer nesse caso?
+        try {
+            this.getJogadorAtual().construirCentroPesquisa(this.baralhoJogador)
+        } catch (error) {
+            if (cidadeParaRemoverCentro) {
+                const cidade = this.getCidade(cidadeParaRemoverCentro)
+
+                cidade.construirCentroPesquisa()
+            }
+
+            throw error
+        }
+
+        this.centroPesquisasRestantes -= 1
 
         this.verificarTurno()
     }

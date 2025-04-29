@@ -47,12 +47,16 @@ export class Cidade {
         return this.cor
     }
 
-    adicionarCentroPesquisa() {
+    construirCentroPesquisa() {
         if (this.temCentro) {
             throw new Error('Cidade já tem centro de pesquisa')
         }
 
         this.temCentro = true
+    }
+
+    removerCentroPesquisa() {
+        this.temCentro = false
     }
 
     adicionarCubo(

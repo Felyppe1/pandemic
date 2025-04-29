@@ -157,6 +157,26 @@ export class Jogador {
         return this.localizacao.getCoresDasDoencasPresentes()
     }
 
+    construirCentroPesquisa(baralho: BaralhoJogador) {
+        if (this.cartas.length === 0) {
+            throw new Error('Você não tem cartas para descartar')
+        }
+
+        const cartaCidade = this.cartas.find(
+            carta =>
+                carta instanceof CartaCidade &&
+                carta.getNome() === this.localizacao.getNome(),
+        )
+
+        if (!cartaCidade) {
+            throw new Error('Você não tem a carta da cidade em que está')
+        }
+
+        this.localizacao.construirCentroPesquisa()
+
+        this.descartarCarta(cartaCidade, baralho)
+    }
+
     ePersonagem(nome: NomePersonagem) {
         return this.personagem.getNome() === nome
     }

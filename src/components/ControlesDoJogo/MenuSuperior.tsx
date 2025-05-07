@@ -1,28 +1,31 @@
-import { Cor } from '../../types'
+import { useJogoStore } from '../../store/useJogoStore'
+import { Cor, COR_ENUM } from '../../types'
 import { CentroPesquisa } from '../CentroPesquisa'
 import { CuboDoenca } from '../CuboDoenca'
 
-type Props = {
-    cartasRestantes: number
-    cubos: Record<Cor, number>
-    centrosPesquisa: number
-    velocidadeInfeccao: number
-    surtos: number
-}
+const mapeamentoEnumCor = {
+    [COR_ENUM.AMARELO]: 'amarelo',
+    [COR_ENUM.AZUL]: 'azul',
+    [COR_ENUM.PRETO]: 'preto',
+    [COR_ENUM.VERMELHO]: 'vermelho',
+} as const
 
-export const MenuSuperior: React.FC<Props> = ({
-    cartasRestantes,
-    cubos,
-    centrosPesquisa,
-    velocidadeInfeccao,
-    surtos,
-}) => {
+export function MenuSuperior() {
+    const jogo = useJogoStore(state => state.estadoJogo)!
+
+    const cubos = Object.fromEntries(
+        Array.from(jogo.doencas).map(({ cor, cubosRestantes }) => [
+            mapeamentoEnumCor[cor],
+            cubosRestantes,
+        ]),
+    ) as Record<Cor, number>
+
     return (
         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-50 bg-black/80 text-white px-10 py-2 rounded-b-lg border-b-1 border-x-1 border-white shadow flex items-center flex-col gap-1 font-mono text-sm sm:rounded-b-full sm:flex-row sm:gap-8">
             {/* Cartas restantes */}
             <div className="flex items-center gap-1">
                 <span className="text-xs">🃏</span>
-                <span>{cartasRestantes}</span>
+                <span>{jogo.baralhoJogador.cartas.length}</span>
             </div>
 
             {/* Cubos por cor */}
@@ -41,19 +44,25 @@ export const MenuSuperior: React.FC<Props> = ({
                 {/* Centros de pesquisa */}
                 <div className="flex items-center gap-1">
                     <CentroPesquisa className="w-4" />
-                    <span>{centrosPesquisa}</span>
+                    <span>{jogo.centroPesquisasRestantes}</span>
                 </div>
 
                 {/* Taxa de infecção */}
                 <div className="flex items-center gap-1">
                     <span className="text-green-300">☣️</span>
-                    <span>{velocidadeInfeccao}</span>
+                    <span>
+                        {
+                            jogo.baralhoInfeccao.listaVelocidadeInfeccao[
+                                jogo.baralhoInfeccao.indiceVelocidadeInfeccao
+                            ]
+                        }
+                    </span>
                 </div>
 
                 {/* Surtos */}
                 <div className="flex items-center gap-1">
                     <span className="text-red-400">🚨</span>
-                    <span>{surtos}</span>
+                    <span>{jogo.marcadorSurto}</span>
                 </div>
             </div>
         </div>

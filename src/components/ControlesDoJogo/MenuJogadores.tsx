@@ -4,20 +4,57 @@ import {
     mapeamentoCorPersonagens,
     mapeamentoFotoPersonagens,
 } from '../../utils/mapeamentos'
-import { Carta, Personagem } from '../../types'
+import { COR_ENUM } from '../../types'
+import { useJogoStore } from '../../store/useJogoStore'
+import {
+    CartaCidadeToObject,
+    CartaEventoToObject,
+} from '../../core/classes/carta'
 
-type Jogador = {
-    nome: string
-    personagem: Personagem
-    cartas: Carta[]
-    eJogadorAtual: boolean
-}
+export function MenuJogadores() {
+    const jogo = useJogoStore(state => state.estadoJogo)!
 
-type Props = {
-    jogadores: Jogador[]
-}
+    const jogadores = jogo.jogadores.map(jogador => {
+        return {
+            nome: jogador.personagem.nome,
+            personagem: jogador.personagem.nome,
+            eJogadorAtual: jogo.jogadores[jogo.indiceJogadorAtual] === jogador,
+            cartas: jogador.cartas.map(carta => {
+                if (carta.tipo === 'carta cidade') {
+                    const cartaCidade = carta as CartaCidadeToObject
 
-export const MenuJogadores: React.FC<Props> = ({ jogadores }) => {
+                    let corMapeada: 'amarelo' | 'azul' | 'preto' | 'vermelho'
+
+                    if (cartaCidade.cor === COR_ENUM.AMARELO)
+                        corMapeada = 'amarelo'
+                    else if (cartaCidade.cor === COR_ENUM.AZUL)
+                        corMapeada = 'azul'
+                    else if (cartaCidade.cor === COR_ENUM.PRETO)
+                        corMapeada = 'preto'
+                    else corMapeada = 'vermelho'
+
+                    return {
+                        nome: cartaCidade.nome,
+                        tipo: 'carta cidade',
+                        cor: corMapeada,
+                    }
+                } else if (carta.tipo === 'carta evento') {
+                    const cartaEvento = carta as CartaEventoToObject
+
+                    return {
+                        nome: cartaEvento.nome,
+                        tipo: 'carta evento',
+                    }
+                } else {
+                    return {
+                        nome: 'Epidemia',
+                        tipo: 'carta epidemia',
+                    }
+                }
+            }),
+        }
+    })
+
     const [mostrarMenu, setMostrarMenu] = useState(true)
 
     return (

@@ -1,5 +1,5 @@
 import { COR_ENUM, NomeCidade } from '../../core/classes/cidade'
-import { JogoToObject } from '../../core/classes/jogo'
+import { useJogoStore } from '../../store/useJogoStore'
 import { Cor } from '../../types'
 import {
     mapeamentoCor,
@@ -248,29 +248,13 @@ const coordenadasCidades: { nomeCidade: NomeCidade; x: number; y: number }[] = [
     },
 ]
 
-// const mapeamentoCorPersonagens: Record<Personagem, string> = {
-//     'Agente de Viagens': '#d187f5',
-//     Médico: '#f9943b',
-//     Cientista: '#adadad',
-//     Pesquisadora: '#c5b08c',
-//     'Especialista em Operações': '#7cc66c',
-//     'Especialista em Quarentena': '#006400',
-//     'Especialista em Planos de Contingência': '#4fbfff',
-// }
-
-// const mapeamentoCor = {
-//     [COR_ENUM.AMARELO]: '#fdc700',
-//     [COR_ENUM.AZUL]: '#155dfc',
-//     [COR_ENUM.PRETO]: '#262626',
-//     [COR_ENUM.VERMELHO]: '#c70036',
-// }
-
 interface TabuleiroProps {
-    jogo: JogoToObject
     onClickCidade: (nomeCidadeDestino: NomeCidade) => void
 }
 
-export function Tabuleiro({ jogo, onClickCidade }: TabuleiroProps) {
+export function Tabuleiro({ onClickCidade }: TabuleiroProps) {
+    const jogo = useJogoStore(state => state.estadoJogo)!
+
     const linhasRenderizadas = new Set<string>()
 
     let nivelCubos = 0

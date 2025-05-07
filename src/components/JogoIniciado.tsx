@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react'
-import { JogadorToObject } from '../core/classes/jogador'
+import { useJogoStore } from '../store/useJogoStore'
 
 interface JogoIniciadoProps {
-    jogadores: JogadorToObject[]
     onFinalizarTurno: () => void
 }
 
-export function JogoIniciado({
-    jogadores,
-    onFinalizarTurno,
-}: JogoIniciadoProps) {
+export function JogoIniciado({ onFinalizarTurno }: JogoIniciadoProps) {
+    const jogo = useJogoStore(state => state.estadoJogo)!
+
     const [mostrar, setMostrar] = useState<'jogadores' | 'mensagem' | null>(
         null,
     )
 
     useEffect(() => {
-        if (jogadores) {
+        if (jogo.jogadores) {
             setMostrar('jogadores')
 
             const timer1 = setTimeout(() => setMostrar('mensagem'), 5000)
@@ -34,7 +32,7 @@ export function JogoIniciado({
     if (mostrar === 'jogadores') {
         return (
             <div className="absolute flex justify-evenly w-full flex-wrap gap-6 px-8">
-                {jogadores.map((jogador, index) => {
+                {jogo.jogadores.map((jogador, index) => {
                     return (
                         <div
                             key={index}

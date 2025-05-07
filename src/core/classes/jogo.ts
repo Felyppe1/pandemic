@@ -222,7 +222,10 @@ export class Jogo {
             throw error
         }
 
-        this.centroPesquisasRestantes -= 1
+        this.centroPesquisasRestantes =
+            this.centroPesquisasRestantes === 0
+                ? 0
+                : (this.centroPesquisasRestantes -= 1)
 
         this.verificarTurno()
     }
@@ -435,6 +438,7 @@ export class Jogo {
             marcadorSurto: this.marcadorSurto,
             indiceJogadorAtual: this.indiceJogadorAtual,
             acoesRestantes: this.acoesRestantes,
+            centroPesquisasRestantes: this.centroPesquisasRestantes,
         }
     }
 }
@@ -449,6 +453,7 @@ export interface JogoToObject {
     marcadorSurto: number
     indiceJogadorAtual: number
     acoesRestantes: number
+    centroPesquisasRestantes: number
 }
 
 export function removerItemAleatorio<T>(array: T[]): T {

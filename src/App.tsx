@@ -1,19 +1,22 @@
 import { useState } from 'react'
-import { DIFICULDADE_ENUM, Jogo, JogoToObject } from './core/classes/jogo'
+import { DIFICULDADE_ENUM, Jogo } from './core/classes/jogo'
 import { JogoIniciado } from './components/JogoIniciado'
 import { ControlesDoJogo } from './components/ControlesDoJogo'
 import { Tabuleiro } from './components/Tabuleiro'
 import { NomeCidade } from './core/classes/cidade'
 import { Acao, Cor } from './types'
 import { mapeamentoCorParaCorEnum } from './utils/mapeamentos'
+import { useJogoStore } from './store/useJogoStore'
 
 export function App() {
     const [fase, setFase] = useState<'turno' | null>(null)
     const [jogo, setJogo] = useState<Jogo | null>(null)
-    const [estadoJogo, setEstadoJogo] = useState<JogoToObject | null>(null)
     const [qtdJogadores, setQtdJogadores] = useState(2)
     const [dificuldade, setDificuldade] = useState(DIFICULDADE_ENUM.NORMAL)
     const [acao, setAcao] = useState<Acao | null>(null)
+
+    const setEstadoJogo = useJogoStore(state => state.setEstadoJogo)
+    const estadoJogo = useJogoStore(state => state.estadoJogo)
 
     function handleMover(nomeCidade: NomeCidade) {
         if (acao === 'voo direto') jogo!.moverJogadorPorVooDireto(nomeCidade)
@@ -41,6 +44,14 @@ export function App() {
         setEstadoJogo(jogo!.toObject())
     }
 
+    function handleConstruirCentroPesquisa(
+        cidadeParaRemoverCentro?: NomeCidade,
+    ) {
+        jogo!.construirCentroPesquisa(cidadeParaRemoverCentro)
+
+        setEstadoJogo(jogo!.toObject())
+    }
+
     const iniciarJogo = () => {
         const jogo = new Jogo(qtdJogadores, dificuldade)
 
@@ -55,18 +66,17 @@ export function App() {
         >
             {estadoJogo ? (
                 <>
-                    <Tabuleiro jogo={estadoJogo} onClickCidade={handleMover} />
-                    <JogoIniciado
-                        jogadores={estadoJogo.jogadores}
-                        onFinalizarTurno={() => setFase('turno')}
-                    />
+                    <Tabuleiro onClickCidade={handleMover} />
+                    <JogoIniciado onFinalizarTurno={() => setFase('turno')} />
 
                     {fase === 'turno' ? (
                         <ControlesDoJogo
-                            jogo={estadoJogo}
                             acaoSelecionada={acao}
                             onClickAcao={handleAcao}
                             onClickTratarDoenca={handleTratarDoenca}
+                            onClickConstruirCentroPesquisa={
+                                handleConstruirCentroPesquisa
+                            }
                         />
                     ) : (
                         <></>

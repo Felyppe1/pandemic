@@ -230,6 +230,39 @@ export class Jogo {
         this.verificarTurno()
     }
 
+    encontrarCura(nomeCartas: NomeCidade[]) {
+        const jogadorAtual = this.getJogadorAtual()
+        const cidadeAtual = jogadorAtual.getLocalizacao()
+
+        if (!cidadeAtual.temCentroPesquisa()) {
+            throw new Error('Cidade não tem centro de pesquisa')
+        }
+
+        const cidades = this.cidades.filter(cidade =>
+            nomeCartas.includes(cidade.getNome()),
+        )
+
+        const cor = cidades[0].getCor()
+
+        const saoTodasDaMesmaCor = cidades.every(
+            cidade => cor === cidade.getCor(),
+        )
+
+        if (!saoTodasDaMesmaCor) {
+            throw new Error('As cartas devem ser da mesma cor')
+        }
+
+        const doenca = this.getDoenca(cor)
+
+        if (doenca.estaCurada()) {
+            throw new Error('A cura já foi encontrada')
+        }
+
+        jogadorAtual.encontrarCura(doenca, nomeCartas, this.baralhoJogador)
+
+        this.verificarTurno()
+    }
+
     moverOutroJogadorParaCidadeComJogador(
         indiceJogador: number,
         nomeCidade: NomeCidade,

@@ -7,6 +7,7 @@ import {
     CartaToObject,
 } from './carta'
 import { Cidade, NomeCidade } from './cidade'
+import { Doenca } from './doenca'
 import {
     EspecialistaContingencia,
     NomePersonagem,
@@ -179,6 +180,62 @@ export class Jogador {
 
     ePersonagem(nome: NomePersonagem) {
         return this.personagem.getNome() === nome
+    }
+
+    validarCartasParaEncontrarCura(nomeCartas: NomeCidade[]) {
+        const cartas = this.cartas.filter(
+            carta =>
+                carta instanceof CartaCidade &&
+                nomeCartas.includes(carta.getNome()),
+        ) as CartaCidade[]
+
+        const corDasCartas = cartas[0].getCor()
+
+        const saoDaMesmaCor = cartas.every(
+            carta => corDasCartas === carta.getCor(),
+        )
+
+        if (!saoDaMesmaCor) {
+            throw new Error('As cartas devem ser da mesma cor')
+        }
+
+        const possuiCartasSuficientes =
+            this.personagem.getNome() === 'Cientista'
+                ? cartas.length >= 4
+                : cartas.length >= 5
+
+        if (!possuiCartasSuficientes) {
+            throw new Error(
+                `Você não tem cartas suficientes para encontrar a cura da doença ${corDasCartas}`,
+            )
+        }
+
+        return corDasCartas
+    }
+
+    encontrarCura(
+        doenca: Doenca,
+        nomeCartas: NomeCidade[],
+        baralho: BaralhoJogador,
+    ) {
+        const cartas = this.cartas.filter(
+            carta =>
+                carta instanceof CartaCidade &&
+                nomeCartas.includes(carta.getNome()),
+        )
+
+        const numeroDeCartasNecessarias =
+            this.personagem.getNome() === 'Cientista'
+                ? (cartas.length = 4)
+                : (cartas.length = 5)
+
+        if (!numeroDeCartasNecessarias) {
+            throw new Error(`O número de cartas para encontrar cura é inválido`)
+        }
+
+        doenca.descobrirCura()
+
+        cartas.forEach(carta => this.descartarCarta(carta, baralho))
     }
 
     getPersonagem() {

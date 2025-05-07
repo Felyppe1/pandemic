@@ -60,6 +60,12 @@ export class Doenca {
 
     descobrirCura() {
         this.encontrouCura = true
+
+        try {
+            this.erradicar()
+        } catch (e) {
+            // Não fazer nada
+        }
     }
 
     erradicar() {
